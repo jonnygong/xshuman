@@ -175,7 +175,6 @@
             <el-row>
               <el-col :span="20">
                 <el-input v-model="formData.con_title[index]" placeholder="请输入章节标题" auto-complete="off"></el-input>
-
               </el-col>
               <el-col :span="4">
                 <div class="option-btn">
@@ -519,14 +518,6 @@
           {c_id: this.$route.params.c_id},
           this.formData
         )
-        // 处理时间为时间戳
-//              let newsTime = this.formData.news_time
-//              if (typeof this.formData.news_time === 'number') {
-//                newsTime = this.formData.news_time
-//              } else {
-//                newsTime = new Date(this.formData.news_time).getTime()
-//              }
-//              params.news_time = newsTime // 后台接收10位时间戳，需要转换
         if (this.formData.template === 3) {
           params.content = this.content
         } else {
@@ -538,7 +529,6 @@
         const res = this.$http.post(`${MODEL_NAME}/update`, params)
         this.formLoading = false
         if (res === null) return
-
         this.handleEdit()
         console.log(this.formData.img)
         this.dialogTableVisible = true

@@ -20,10 +20,10 @@
    * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
    */
   // 生产环境
-  window.UEDITOR_HOME_URL = "/admin/static/ueditor/";
+  // window.UEDITOR_HOME_URL = "/admin/static/ueditor/";
 
   // 开发环境
-  // window.UEDITOR_HOME_URL = "/static/ueditor/";
+  window.UEDITOR_HOME_URL = "/static/ueditor/";
 
   var URL = window.UEDITOR_HOME_URL || getUEBasePath();
 

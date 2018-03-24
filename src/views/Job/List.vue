@@ -131,7 +131,7 @@
           <!--</el-tag>-->
         <!--</template>-->
       <!--</el-table-column>-->
-      <el-table-column label="操作" width="140" fixed="right">
+      <el-table-column label="操作" width="100" fixed="right">
         <template slot-scope="scope">
           <!--<el-button size="small"-->
                      <!--@click="statusSubmit(scope.$index, scope.row)"-->
@@ -139,17 +139,17 @@
             <!--{{ scope.row.status === 1 ? '停用' : scope.row.status === 0 ? '启用' : '已删除' }}-->
           <!--</el-button>-->
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">查看</el-button>
-          <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+          <!-- <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
 
     <!--工具条-->
     <el-col :span="24" class="toolbar">
-      <el-button type="danger"
+      <!-- <el-button type="danger"
                  @click="batchAction('remove')"
                  :disabled="this.sels.length===0">批量删除
-      </el-button>
+      </el-button> -->
       <el-pagination layout="prev, pager, next"
                      @current-change="handleCurrentChange"
                      :page-size="pagesize"

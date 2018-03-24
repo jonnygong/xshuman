@@ -89,8 +89,23 @@
       </el-form-item>
       <!-- 富文本 -->
       <el-form-item label="活动介绍" prop="intro">
-        <UE :defaultMsg="formData.intro" ref="ue"></UE>
+        <el-col>
+            <el-row :span="12">
+              <UE :defaultMsg="formData.intro" ref="ue"></UE>
+            </el-row>
+            <el-row :span="12">
+              <el-button class="showUEContent" type="primary" @click="showUEContent">预览</el-button>
+            </el-row>
+          </el-col>
       </el-form-item>
+
+      <el-dialog title="富文本内容预览" :visible.sync="dialogTableVisible">
+        <template>
+          <div class="UEimg">
+            <img :src='formData.img' alt='富文本内容预览' />
+          </div>
+        </template>
+      </el-dialog>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click.native="handleCancel">取消</el-button>
@@ -118,6 +133,7 @@
         }
       }
       return {
+        dialogTableVisible: false,
         /**
          * type 'text'(普通文本) 'number'(数值) 'textarea'(文本域)
          *      'period'(时间段)  --> start_prop / end_prop 对应 开始 / 结束 时间字段名称
@@ -180,7 +196,7 @@
           pre_num: [
             {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
           ],
-          cover: [{required: true, message: '请上传封面图片'}],
+          cover: [{required: true, message: '请上传图片'}],
           title: [{required: true, message: '请输入内容', trigger: 'blur'}],
           company: [{required: true, message: '请输入内容', trigger: 'blur'}],
           start_time: [
@@ -208,7 +224,8 @@
           company: '',
           total_num: '',
           intro: '',
-          pre_num: ''
+          pre_num: '',
+          img: ''
         }
       }
     },
@@ -238,6 +255,19 @@
         if (res === null) return
         this.options.p_id = this.formateCategory(res.param.cat)
         console.log(this.options.p_id)
+      },
+      showUEContent () {
+        this.formLoading = true
+        let params = Object.assign(
+          {p_id: this.$route.params.pid},
+          this.formData
+        )
+        params.intro = this.getUEContent('ue') // 富文本内容
+        const res = this.$http.post(`${MODEL_NAME}/update`, params)
+        this.formLoading = false
+        if (res === null) return
+        this.handleEdit()
+        this.dialogTableVisible = true
       },
       formateOptions (source) {
         let _data = []
@@ -318,5 +348,14 @@
 </script>
 
 <style lang='scss' scoped>
+.showUEContent {
+    margin-top: 20px;
+  }
 
+  .UEimg {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: center;
+  }
 </style>
