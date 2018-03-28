@@ -86,17 +86,17 @@
         <template>
           <el-button type="primary" @click="singleVisible = true">单选题</el-button>
           <el-button type="primary" @click="multipleVisible = true">多选题</el-button>
-          <el-button type="primary" @click="textVisible = true">文本题</el-button>
+          <!--<el-button type="primary" @click="textVisible = true">文本题</el-button>-->
         </template>
       </el-form-item>
       <el-form-item label="问卷题目" class="question-item">
         <template>
-          <p v-if="form.length == 0" style="margin: 0;">一点东西都没有，赶快点击上方按钮添加题目吧！</p>
-          <el-row v-for="(item, index) in form" :key="index">
+          <p v-if="formData.survey_arr.length == 0" style="margin: 0;">一点东西都没有，赶快点击上方按钮添加题目吧！</p>
+          <el-row v-for="(item, index) in formData.survey_arr" :key="index">
             <el-col :span="24">
               <el-row>
-                <el-col :span="6" style="margin-top: -15px;">
-                  <p class="question-hover">Q{{ index + 1 }}:  {{ item.title }} <i
+                <el-col :span="12" style="margin-top: -15px;">
+                  <p class="question-hover">Q{{ index + 1 }}:  {{ item.q_content }} <i
                     class="el-icon-delete question-action" @click="delQuestion(index)"></i></p>
                   <!--<div class="question-action" >-->
                   <!--<el-button icon="delete" size="small"-->
@@ -105,21 +105,21 @@
                 </el-col>
               </el-row>
               <el-row>
-                <el-col :span="18">
-                  <div v-if="item.type === 1">
-                    <div class="single-option question-hover" v-for="(option, index) in item.options" :key="index">
-                      <el-radio :label="option" disabled>
+                <el-col :span="12">
+                  <div v-if="item.q_status === 1">
+                    <div class="single-option question-hover" v-for="(option, index) in item.answer_arr" :key="index">
+                      <el-radio :label="option.a_content" disabled>
                       </el-radio>
-                      <i class="el-icon-delete question-action" @click="delOption(item.options, index)"></i>
+                      <i class="el-icon-delete question-action" @click="delOption(item.answer_arr, index)"></i>
                     </div>
                   </div>
-                  <div v-if="item.type === 2">
-                    <el-checkbox-group class="question-hover" v-for="(option, index) in item.options" :key="index">
-                      <el-checkbox :label="option" disabled></el-checkbox>
-                      <i class="el-icon-delete question-action" @click="delOption(item.options, index)"></i>
+                  <div v-if="item.q_status === 0">
+                    <el-checkbox-group class="question-hover" v-for="(option, index) in item.answer_arr" :key="index">
+                      <el-checkbox :label="option.a_content" disabled></el-checkbox>
+                      <i class="el-icon-delete question-action" @click="delOption(item.answer_arr, index)"></i>
                     </el-checkbox-group>
                   </div>
-                  <div v-if="item.type === 3">
+                  <div v-if="item.q_status === 2">
                     <el-input auto-complete="off" disabled></el-input>
                   </div>
                 </el-col>
@@ -127,6 +127,19 @@
             </el-col>
           </el-row>
         </template>
+      </el-form-item>
+      <el-form-item label="分享标题" prop="share_title">
+        <el-input v-model="formData.share_title"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="分享图片" prop="share_img">
+        <i-uploader v-model="formData.share_img"></i-uploader>
+      </el-form-item>
+      <el-form-item label="分享描述" prop="share_describe">
+        <el-input v-model="formData.share_describe"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -139,13 +152,13 @@
     <el-dialog title="添加单选题" :visible.sync="singleVisible">
       <el-form :model="singleForm">
         <el-form-item label="题目说明" :label-width="formLabelWidth">
-          <el-input v-model="singleForm.title" auto-complete="off"></el-input>
+          <el-input v-model="singleForm.q_content" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="选项" :label-width="formLabelWidth">
-          <div class="option-item" v-for="(option, index) in singleForm.options" :key="index">
+          <div class="option-item" v-for="(option, index) in singleForm.answer_arr" :key="index">
             <el-row>
               <el-col :span="19">
-                <el-input v-model="singleForm.options[index]" :key="index" placeholder="请输入选项内容"
+                <el-input v-model="option.a_content" :key="index" placeholder="请输入选项内容"
                           style="display:inline-block" auto-complete="off"></el-input>
               </el-col>
               <el-col :span="5">
@@ -153,7 +166,7 @@
                   <el-button type="success" icon="plus" size="small"
                              @click="addOption(singleForm)"></el-button>
                   <el-button type="warning" icon="close" size="small"
-                             @click="delOption(singleForm.options, index)"></el-button>
+                             @click="delOption(singleForm.answer_arr, index)"></el-button>
                 </div>
               </el-col>
             </el-row>
@@ -171,13 +184,13 @@
     <el-dialog title="添加多选题" :visible.sync="multipleVisible">
       <el-form :model="multipleForm">
         <el-form-item label="题目说明" :label-width="formLabelWidth">
-          <el-input v-model="multipleForm.title" auto-complete="off"></el-input>
+          <el-input v-model="multipleForm.q_content" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="选项" :label-width="formLabelWidth">
-          <div class="option-item" v-for="(option, index) in multipleForm.options" :key="index">
+          <div class="option-item" v-for="(option, index) in multipleForm.answer_arr" :key="index">
             <el-row>
               <el-col :span="20">
-                <el-input v-model="multipleForm.options[index]" :key="index" placeholder="请输入选项内容"
+                <el-input v-model="option.a_content" :key="index" placeholder="请输入选项内容"
                           style="display:inline-block" auto-complete="off"></el-input>
               </el-col>
               <el-col :span="4">
@@ -185,7 +198,7 @@
                   <el-button type="success" icon="plus" size="small"
                              @click="addOption(multipleForm)"></el-button>
                   <el-button type="warning" icon="close" size="small"
-                             @click="delOption(multipleForm.options, index)"></el-button>
+                             @click="delOption(multipleForm.answer_arr, index)"></el-button>
                 </div>
               </el-col>
             </el-row>
@@ -203,7 +216,7 @@
     <el-dialog title="添加文本题" :visible.sync="textVisible">
       <el-form :model="textForm">
         <el-form-item label="题目说明" :label-width="formLabelWidth">
-          <el-input v-model="textForm.title" auto-complete="off"></el-input>
+          <el-input v-model="textForm.q_content" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -220,18 +233,18 @@
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
 
-  const MODEL_NAME = 'Cms' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
+  const MODEL_NAME = 'Survey' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
   export default {
     data () {
-      var validateContent = (rule, value, callback) => {
-        value = this.$refs['ue'].getUEContent()
-        if (value === '') {
-          callback(new Error('请输入内容'))
-        } else {
-          callback()
-        }
-      }
+//      var validateContent = (rule, value, callback) => {
+//        value = this.$refs['ue'].getUEContent()
+//        if (value === '') {
+//          callback(new Error('请输入内容'))
+//        } else {
+//          callback()
+//        }
+//      }
       return {
         dialogTableVisible: false,
         singleVisible: false,
@@ -239,18 +252,18 @@
         textVisible: false,
         form: [],
         singleForm: {
-          type: 1,
-          title: '',
-          options: ['']
+          q_status: 1,
+          q_content: '',
+          answer_arr: [{a_content: ''}]
         },
         multipleForm: {
-          type: 2,
-          title: '',
-          options: ['']
+          q_status: 0,
+          q_content: '',
+          answer_arr: [{a_content: ''}]
         },
         textForm: {
-          type: 3,
-          title: ''
+          q_status: 2,
+          q_content: ''
         },
         formLabelWidth: '120px',
         /**
@@ -270,8 +283,8 @@
           },
           {
             type: 'textarea',
-            prop: 'content',
-            label: '问卷描述'
+            prop: 'intro',
+            label: '问卷介绍'
           },
           {
             type: 'period',
@@ -290,47 +303,45 @@
         },
         formLoading: false,
         formRules: {
-          sale_status: [
-            {type: 'number', required: true, message: '请选择区域', trigger: 'blur'}
-          ],
-          cover: [
-            {required: true, message: '请上传封面图片'}
-          ],
-          title: [
-            {required: true, message: '请输入项目标题', trigger: 'blur'}
-          ],
-          start_time: [
-            {type: 'date', required: true, message: '请输入开始时间', trigger: 'blur'}
-          ],
-          end_time: [
-            {type: 'date', required: true, message: '请输入结束时间', trigger: 'blur'}
-          ],
-          avg_price: [
-            {type: 'number', required: true, message: '请输入均价', trigger: 'blur'}
-          ],
-          latitude: [
-            {type: 'number', required: true, message: '请选择纬度', trigger: 'blur'}
-          ],
-          longitude: [
-            {type: 'number', required: true, message: '请选择经度', trigger: 'blur'}
-          ],
-          detail: [
-            {validator: validateContent, trigger: 'blur'}
-          ]
+//          sale_status: [
+//            {type: 'number', required: true, message: '请选择区域', trigger: 'blur'}
+//          ],
+//          cover: [
+//            {required: true, message: '请上传封面图片'}
+//          ],
+//          title: [
+//            {required: true, message: '请输入项目标题', trigger: 'blur'}
+//          ],
+//          start_time: [
+//            {type: 'date', required: true, message: '请输入开始时间', trigger: 'blur'}
+//          ],
+//          end_time: [
+//            {type: 'date', required: true, message: '请输入结束时间', trigger: 'blur'}
+//          ],
+//          avg_price: [
+//            {type: 'number', required: true, message: '请输入均价', trigger: 'blur'}
+//          ],
+//          latitude: [
+//            {type: 'number', required: true, message: '请选择纬度', trigger: 'blur'}
+//          ],
+//          longitude: [
+//            {type: 'number', required: true, message: '请选择经度', trigger: 'blur'}
+//          ],
+//          detail: [
+//            {validator: validateContent, trigger: 'blur'}
+//          ]
         },
         // 新增界面数据
         formData: {
           title: '',
-          avg_price: '',
-          info: '',
-          cover: '',
-          images: '',
-          latitude: 0,
-          longitude: 0,
-          detail: '',
+          intro: '',
           start_time: '',
           end_time: '',
-          sale_status: ''
+          status: 1,
+          share_img: '',
+          share_title: '',
+          share_describe: '',
+          survey_arr: []
         }
       }
     },
@@ -364,11 +375,26 @@
           if (valid) {
             this.$confirm('确认提交吗？', '提示', {}).then(async () => {
               this.formLoading = true
-
+              // 处理时间为时间戳
+              let startTime = this.formData.start_time
+              if (typeof this.formData.start_time === 'number') {
+                startTime = parseInt(this.formData.start_time / 1000)
+              } else {
+                startTime = parseInt(new Date(this.formData.start_time).getTime() / 1000)
+              }
+              let endTime = this.formData.end_time
+              if (typeof this.formData.end_time === 'number') {
+                endTime = parseInt(this.formData.end_time / 1000)
+              } else {
+                endTime = parseInt(new Date(this.formData.end_time).getTime() / 1000)
+              }
               let params = Object.assign({}, this.formData)
-              params.detail = this.getUEContent('detail') // 富文本内容
-              params.images = this.getImageList('album') // 多图上传
-              const res = await this.$http.post(`${MODEL_NAME}/add`, params)
+//              params.detail = this.getUEContent('detail') // 富文本内容
+//              params.images = this.getImageList('album') // 多图上传
+              params.start_time = startTime // 后台接收10位时间戳，需要转换
+              params.end_time = endTime // 后台接收10位时间戳，需要转换
+              params.survey_arr = JSON.stringify(this.formData.survey_arr)
+              const res = await this.$http.post(`${MODEL_NAME}/actadd`, params)
               this.formLoading = false
               if (res === null) return
               this.$message({
@@ -382,16 +408,7 @@
       },
       // 新增选项
       addOption (source) {
-        source.options.push('')
-      },
-      submitCheckbox (name) {
-        if (this.validQuestion(this.singleForm)) {
-          const data = Object.assign({}, this.singleForm)
-          this.$store.dispatch('addMultiple', data)
-          this.singleVisible = false
-          this.multipleVisible = false
-          this.textVisible = false
-        }
+        source.answer_arr.push({a_content: ''})
       },
       // 删除选项
       delOption (source, index) {
@@ -405,21 +422,21 @@
         }
       },
       delQuestion (index) {
-        this.form.splice(index, 1)
+        this.formData.survey_arr.splice(index, 1)
       },
       addSingle () {
-        this.form.push(this.singleForm)
-        this.singleForm = {type: 1, title: '', options: ['']}
+        this.formData.survey_arr.push(this.singleForm)
+        this.singleForm = {q_status: 1, q_content: '', answer_arr: [{a_content: ''}]}
         this.singleVisible = false
       },
       addMultiple () {
-        this.form.push(this.multipleForm)
-        this.multipleForm = {type: 2, title: '', options: ['']}
+        this.formData.survey_arr.push(this.multipleForm)
+        this.multipleForm = {q_status: 0, q_content: '', answer_arr: [{a_content: ''}]}
         this.multipleVisible = false
       },
       addText () {
-        this.form.push(this.textForm)
-        this.textForm = {type: 3, title: ''}
+        this.formData.survey_arr.push(this.textForm)
+        this.textForm = {q_status: 2, q_content: ''}
         this.textVisible = false
       },
       // UEditor 获取内容，传入 ref 的值

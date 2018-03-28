@@ -37,14 +37,14 @@
         </el-select>
       </el-form-item>
       <!--<el-form-item label="内容类型" prop="con_type">-->
-        <!--<el-select v-model="formData.con_type" placeholder="请选择内容">-->
-          <!--<el-option-->
-            <!--v-for="(item, index) in options.con_type"-->
-            <!--:key="index"-->
-            <!--:label="item.label"-->
-            <!--:value="item.value">-->
-          <!--</el-option>-->
-        <!--</el-select>-->
+      <!--<el-select v-model="formData.con_type" placeholder="请选择内容">-->
+      <!--<el-option-->
+      <!--v-for="(item, index) in options.con_type"-->
+      <!--:key="index"-->
+      <!--:label="item.label"-->
+      <!--:value="item.value">-->
+      <!--</el-option>-->
+      <!--</el-select>-->
       <!--</el-form-item>-->
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
@@ -204,10 +204,10 @@
           <div slot="tip" class="el-upload__tip">只能上传office相关文件及图片，且不超过2Mb</div>
         </el-upload>
         <ul class="el-upload-list el-upload-list--text">
-        <li class="el-upload-list__item is-success" v-for="(item, index) in formData.attachment_name" >
-          <a class="el-upload-list__item-name" style="text-decoration: none" :href="formData.attachment[index]"><i class="el-icon-document"></i>{{item}}</a>
-          <label class="el-upload-list__item-status-label"><i class="el-icon-upload-success el-icon-circle-check"></i></label>
-          <i class="el-icon-close" @click="handleDelete(index)"></i></li>
+          <li class="el-upload-list__item is-success" v-for="(item, index) in formData.attachment_name" >
+            <a class="el-upload-list__item-name" style="text-decoration: none" :href="formData.attachment[index]"><i class="el-icon-document"></i>{{item}}</a>
+            <label class="el-upload-list__item-status-label"><i class="el-icon-upload-success el-icon-circle-check"></i></label>
+            <i class="el-icon-close" @click="handleDelete(index)"></i></li>
         </ul>
       </el-form-item>
 
@@ -218,7 +218,7 @@
           </div>
         </template>
       </el-dialog>
-    <!-- </el-form> -->
+      <!-- </el-form> -->
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click.native="handleCancel">取消</el-button>
@@ -569,7 +569,11 @@
         this.formData = Object.assign({}, res.param.list)
         this.options.c_id = this.formateCategory(res.param.cat)
         this.formData.news_time = new Date(this.formData.news_time * 1000)
-        this.fileslist = res.param.list.attachment_name
+        if (res.param.list.attachment === '') {
+          this.formData.attachment = []
+          this.formData.attachment_name = []
+        }
+        this.fileslist = this.formData.attachment_name
         if (res.param.list.template === 3) {
           this.content = res.param.list.content
         } else {

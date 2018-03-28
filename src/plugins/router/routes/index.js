@@ -533,6 +533,32 @@ let routes = [
   //     }
   //   ]
   // },
+  // 企业成员
+  {
+    path: '/unit',
+    component: Main,
+    name: '企业成员',
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/Unit/List.vue'),
+        name: '企业成员列表',
+        meta: {requiresAuth: true, alias: 'Admin/Company/list'}
+      },
+      {
+        path: 'list/edit/:id',
+        component: () => import('@/views/Unit/Edit.vue'),
+        name: '企业成员编辑',
+        meta: {requiresAuth: true, alias: 'Admin/Company/list'}
+      },
+      {
+        path: 'list/add',
+        component: () => import('@/views/Unit/Add.vue'),
+        name: '企业成员新增',
+        meta: {requiresAuth: true, alias: 'Admin/Company/list'}
+      }
+    ]
+  },
   // 菜单演示
   {
     path: '/demo1',

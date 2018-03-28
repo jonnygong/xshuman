@@ -63,7 +63,8 @@ const SET_SIDE_NAV = (state, nav) => {
     'Admin/Goods/list': {iconCls: '', url: '/goods/list'},
     'Admin/User/intro': {iconCls: '', url: '/user/intro'},
     'Admin/User/summary': {iconCls: '', url: '/user/summary'},
-    'Admin/Canvass/list': {iconCls: '', url: '/Canvass/list'}
+    'Admin/Canvass/list': {iconCls: '', url: '/canvass/list'},
+    'Admin/Company/list': {iconCls: '', url: '/unit/list'}
   }
   for (let key in nav) {
     let item = nav[key]

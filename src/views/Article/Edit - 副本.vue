@@ -37,14 +37,14 @@
         </el-select>
       </el-form-item>
       <!--<el-form-item label="内容类型" prop="con_type">-->
-      <!--<el-select v-model="formData.con_type" placeholder="请选择内容">-->
-      <!--<el-option-->
-      <!--v-for="(item, index) in options.con_type"-->
-      <!--:key="index"-->
-      <!--:label="item.label"-->
-      <!--:value="item.value">-->
-      <!--</el-option>-->
-      <!--</el-select>-->
+        <!--<el-select v-model="formData.con_type" placeholder="请选择内容">-->
+          <!--<el-option-->
+            <!--v-for="(item, index) in options.con_type"-->
+            <!--:key="index"-->
+            <!--:label="item.label"-->
+            <!--:value="item.value">-->
+          <!--</el-option>-->
+        <!--</el-select>-->
       <!--</el-form-item>-->
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
@@ -77,7 +77,7 @@
             <el-form-item :prop="item.end_prop">
               <el-date-picker v-model.date="formData[item.end_prop]"
                               align="right"
-                              type="date"
+                              type="datetime"
                               placeholder="选择结束日期"
                               style="width: 100%"></el-date-picker>
 
@@ -94,6 +94,7 @@
         <!-- 单图片上传 -->
         <i-uploader v-else-if="item.type === 'upload'"
                     v-model="formData[item.prop]"></i-uploader>
+
         <!-- 选择器 -->
         <el-select v-else-if="item.type === 'select'"
                    v-model.number="formData[item.prop]"
@@ -163,32 +164,51 @@
               <UE :defaultMsg="this.formData.content" ref="ue"></UE>
             </el-row>
             <el-row :span="12">
-              <!--<el-button class="showUEContent" type="primary" @click="showUEContent">预览</el-button>-->
+              <el-button class="showUEContent" type="primary" @click="showUEContent">预览</el-button>
             </el-row>
           </el-col>
         </template>
       </el-form-item>
       <el-form-item label="章节" prop="con_title" v-show="formData.template === 3">
         <template>
-          <div class="option-item" v-for="(item, index) in formData.con_title">
+          <div class="option-item" v-for="(item, index) in content">
             <el-row>
+              <el-col style="margin-top: -5px;">第{{ index + 1 }}章</el-col>
               <el-col :span="20">
-                <el-input v-model="formData.con_title[index]" placeholder="请输入章节标题" auto-complete="off"></el-input>
-
+                <el-input v-model="item.title[index]" placeholder="请输入章节标题" auto-complete="off"></el-input>
               </el-col>
               <el-col :span="4">
                 <div class="option-btn">
                   <el-button type="success" icon="plus" size="small"
-                             @click="addOption"></el-button>
+                             @click="addOption(index)"></el-button>
                   <el-button type="warning" icon="close" size="small"
                              @click="delOption(index)"></el-button>
                 </div>
               </el-col>
             </el-row>
-            <el-input class="option-textarea" type="textarea" v-model="content[index]" :key="index" placeholder="请输入章节内容"
-                      style="display:inline-block" auto-complete="off"></el-input>
+            <!--<div class="option-item" v-for="(con, conIndex) in content.options">-->
+              <el-row>
+                <el-col :span="20">
+                  <el-input class="option-textarea" type="textarea" v-model="item.options[index]" :key="index" placeholder="请输入章节内容"
+                            style="display:inline-block" auto-complete="off"></el-input>
+                </el-col>
+                <el-col :span="4">
+                  <div class="option-btn">
+                    <el-button type="success" icon="plus" size="small"
+                               @click="addContent(index)"></el-button>
+                    <el-button type="warning" icon="close" size="small"
+                               @click="delContent(index)"></el-button>
+                  </div>
+                </el-col>
+              </el-row>
+            <!--</div>-->
           </div>
         </template>
+      </el-form-item>
+      <el-form-item label="文章外链" prop="link">
+        <el-input v-model="formData.link"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="附件上传" prop="attachment" width="200">
         <el-upload
@@ -204,25 +224,28 @@
           <div slot="tip" class="el-upload__tip">只能上传office相关文件及图片，且不超过2Mb</div>
         </el-upload>
         <ul class="el-upload-list el-upload-list--text">
-          <li class="el-upload-list__item is-success" v-for="(item, index) in formData.attachment_name" >
-            <a class="el-upload-list__item-name" style="text-decoration: none" :href="formData.attachment[index]"><i class="el-icon-document"></i>{{item}}</a>
-            <label class="el-upload-list__item-status-label"><i class="el-icon-upload-success el-icon-circle-check"></i></label>
-            <i class="el-icon-close" @click="handleDelete(index)"></i></li>
+        <li class="el-upload-list__item is-success" v-for="(item, index) in formData.attachment_name" >
+          <a class="el-upload-list__item-name" style="text-decoration: none" :href="formData.attachment[index]"><i class="el-icon-document"></i>{{item}}</a>
+          <label class="el-upload-list__item-status-label"><i class="el-icon-upload-success el-icon-circle-check"></i></label>
+          <i class="el-icon-close" @click="handleDelete(index)"></i></li>
         </ul>
       </el-form-item>
 
       <el-dialog title="富文本内容预览" :visible.sync="dialogTableVisible">
         <template>
           <div class="UEimg">
-            <img :src='img' alt='富文本内容预览' />
+            <img :src='formData.img' alt='富文本内容预览' />
           </div>
         </template>
       </el-dialog>
+    <!-- </el-form> -->
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click.native="handleCancel">取消</el-button>
       <el-button type="primary" @click.native="formSubmit" :loading="formLoading">提交</el-button>
     </div>
+
+
   </div>
 </template>
 
@@ -247,8 +270,6 @@
 //      }
       return {
         baseUrl: baseUrl,
-        displayUE: false,
-        displayChapter: false,
         dialogTableVisible: false,
         /**
          * type 'text'(普通文本) 'number'(数值) 'textarea'(文本域)
@@ -287,17 +308,8 @@
 //          {
 //            type: 'select',
 //            prop: 'template',
-//            label: '模板类型',
+//            label: '模板',
 //            option: 'template', // 下拉列表数据别名
-//            labelProp: 'label', // 下拉列表数组内元素 label 别名
-//            valueProp: 'value', // 下拉列表数组内元素 value 别名
-//            placeholder: '请输入内容'
-//          },
-//          {
-//            type: 'select',
-//            prop: 'con_type',
-//            label: '内容类型',
-//            option: 'con_type', // 下拉列表数据别名
 //            labelProp: 'label', // 下拉列表数组内元素 label 别名
 //            valueProp: 'value', // 下拉列表数组内元素 value 别名
 //            placeholder: '请输入内容'
@@ -326,11 +338,11 @@
             prop: 'info',
             label: '简介'
           },
-          {
-            type: 'text',
-            prop: 'link',
-            label: '外链'
-          },
+//          {
+//            type: 'text',
+//            prop: 'link',
+//            label: '外链'
+//          },
           {
             type: 'number',
             prop: 'sort',
@@ -367,14 +379,15 @@
             {value: 2, label: '红头文件'},
             {value: 3, label: '大法规'}
           ],
+          p_id: [],
           con_type: [
             {value: 1, label: '富文本编辑框'},
             {value: 2, label: '章节'}
           ]
         },
         icon_color: '',
-        img: '',
-        content: [],
+        content: [{title: '', options: ['']}],
+        UEcontent: '',
         list: [],
         fileslist: [],
         formLoading: false,
@@ -391,6 +404,9 @@
           template: [
             {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
           ],
+//          con_type: [
+//            {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
+//          ],
           cover: [
             {required: true, message: '请上传封面图片'}
           ],
@@ -406,9 +422,9 @@
           info: [
             {required: true, message: '请输入内容', trigger: 'blur'}
           ],
-          link: [
-            {required: true, message: '请输入内容', trigger: 'blur'}
-          ],
+//          link: [
+//            {required: true, message: '请输入内容', trigger: 'blur'}
+//          ],
           sort: [
             {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
           ],
@@ -441,7 +457,8 @@
 //          con_type: '',
           con_title: [''],
           policy_code: '',
-          red_title: ''
+          red_title: '',
+          img: ''
         }
       }
     },
@@ -451,7 +468,7 @@
       },
       handleChange (file, fileList) {
         this.fileslist = fileList.slice(-3)
-        console.log(file, fileList)
+        // console.log(file, fileList)
       },
       handleUploadSuccess (response, file, fileList) {
         if (response.status === 200) {
@@ -486,22 +503,15 @@
         console.log(err, file, fileList)
       },
       // 新增选项
-      addOption (source) {
-        this.formData.con_title.push('')
-        this.content.push('')
+      addOption (index) {
+//        this.formData.con_title.push('')
+        this.content.push({title: '', options: ['']})
       },
-//      submitCheckbox (name) {
-//        if (this.validQuestion(this.form)) {
-//          const data = Object.assign({}, this.form)
-//          this.$store.dispatch('addQuestion', data)
-//          this.dialogFormVisible = false
-//        }
-//      },
       // 删除选项
       delOption (index) {
-        if (this.formData.con_title.length > 1) {
-          this.formData.con_title.splice(index, 1)
+        if (this.content.length > 1) {
           this.content.splice(index, 1)
+//          this.content[index].splice(conIndex, 1)
         } else {
           this.$message({
             message: '最后一个啦！',
@@ -509,44 +519,45 @@
           })
         }
       },
-      async getArrayData () {
-        const res = await this.$http.post(`${MODEL_NAME}/info`, {
-          id: 0,
-          c_id: this.$route.params.c_id
-        })
-        if (res === null) return
-        this.options.c_id = this.formateCategory(res.param.cat)
-        this.options.cat = res.param.cat
-//        if (res.param.list.img) {
-//          this.img = res.param.list.img
-//        }
-        console.log(this.icon_color)
-        // this.list = res.param.list
-        // 搜索选项
-        // this.filters.options.type = this.formateOptions(res.param.type)
-        // this.filters.options.type.unshift({label: '全部分类', value: ''})
+      addContent (index) {
+//        this.formData.con_title.push('')
+        this.content[index].options.push('')
+      },
+      delContent (index) {
+        if (this.content.options.length > 1) {
+          this.content.options.splice(index, 1)
+//          this.content[index].splice(conIndex, 1)
+        } else {
+          this.$message({
+            message: '最后一个啦！',
+            type: 'warning'
+          })
+        }
       },
       showUEContent () {
         this.formLoading = true
         this.options.cat.forEach(item => {
           if (this.formData.c_id === item.id) {
             this.formData.icon = item.color
+            console.log(this.formData.icon)
           }
         })
-        let params = Object.assign({
-          c_id: this.$route.params.c_id
-//                  icon: this.formData.icon
-        }, this.formData)
+        let params = Object.assign(
+          {c_id: this.$route.params.c_id},
+          this.formData
+        )
         if (this.formData.template === 3) {
           params.content = this.content
         } else {
+          params.con_title = ['']
           params.content = this.getUEContent('ue') // 富文本内容
+          console.log(params.con_title)
         }
-        const res = this.$http.post(`${MODEL_NAME}/add`, params)
+//              params.content = this.getUEContent('ue') // 富文本内容
+        const res = this.$http.post(`${MODEL_NAME}/update`, params)
         this.formLoading = false
         if (res === null) return
-
-        this.getArrayData()
+        this.handleEdit()
         console.log(this.formData.img)
         this.dialogTableVisible = true
       },
@@ -554,14 +565,55 @@
         this.dialogTableVisible = false
       },
       changeContype (val) {
-        if (val === 1) {
-          this.formData.content = ''
-          console.log(typeof this.formData.content)
-        } else {
-          this.formData.content = []
-          console.log(typeof this.formData.content)
-        }
+        console.log(val)
+//        if (this.formData.con_type === 2) {
+//          if (params.con_title.length < 1) {
+//            params.content = ['']
+//            params.con_title = ['']
+//            console.log(11111)
+//          } else {
+//            params.content = this.content
+//          }
+//        }
+        this.handleEdit()
+//        this.UEcontent = ''
+//        this.content = ['']
+//          this.formData.con_title = ['']
+//        if (val === 1) {
+//          this.UEcontent = ''
+//        } else {
+//          this.content = ['']
+//          this.formData.con_title = ['']
+//        }
       },
+      // 显示编辑界面
+      async handleEdit (index, row) {
+        let params = {
+          id: this.$route.params.id,
+          c_id: this.$route.params.c_id
+        }
+        const res = await this.$http.post(`${MODEL_NAME}/info`, params)
+        if (res === null) return
+        this.formData = Object.assign({}, res.param.list)
+        this.options.c_id = this.formateCategory(res.param.cat)
+        this.formData.news_time = new Date(this.formData.news_time * 1000)
+        this.fileslist = res.param.list.attachment_name
+        if (res.param.list.template === 3) {
+          this.content = res.param.list.content
+        } else {
+          this.formData.content = res.param.list.content
+        }
+        this.options.cat = res.param.cat
+      },
+//      async getArrayData () {
+//        const res = await this.$http.post(`${MODEL_NAME}/info`, {
+//          id: 0,
+//          c_id: this.$route.params.c_id
+//        })
+//        if (res === null) return
+//        this.options.c_id = this.formateCategory(res.param.cat)
+//        this.options.cat = res.param.cat
+//      },
       formateOptions (source) {
         let _data = []
         for (let key in source) {
@@ -584,14 +636,14 @@
           }
           let tempObj = {
             id: item.id,
-            // pid: item.id,
+            // pid: item.pid,
             c_name: _tag + item.c_name
           }
           select.push(tempObj)
         })
         return select.slice(0)
       },
-      // 新增
+      // 编辑
       formSubmit () {
         this.$refs.formData.validate(valid => {
           if (valid) {
@@ -600,12 +652,13 @@
               this.options.cat.forEach(item => {
                 if (this.formData.c_id === item.id) {
                   this.formData.icon = item.color
+                  console.log(this.formData.icon)
                 }
               })
-              let params = Object.assign({
-                c_id: this.$route.params.c_id
-//                  icon: this.formData.icon
-              }, this.formData)
+              let params = Object.assign(
+                {c_id: this.$route.params.c_id},
+                this.formData
+              )
               // 处理时间为时间戳
 //              let newsTime = this.formData.news_time
 //              if (typeof this.formData.news_time === 'number') {
@@ -617,13 +670,16 @@
               if (this.formData.template === 3) {
                 params.content = this.content
               } else {
+                params.con_title = ['']
                 params.content = this.getUEContent('ue') // 富文本内容
+                console.log(params.con_title)
               }
-              const res = await this.$http.post(`${MODEL_NAME}/add`, params)
+//              params.content = this.getUEContent('ue') // 富文本内容
+              const res = await this.$http.post(`${MODEL_NAME}/update`, params)
               this.formLoading = false
               if (res === null) return
               this.$message({
-                message: '新建成功',
+                message: '修改成功',
                 type: 'success'
               })
               this.handleCancel()
@@ -634,10 +690,14 @@
       // UEditor 获取内容，传入 ref 的值
       getUEContent (ele) {
         return this.$refs[ele].getUEContent()
+      },
+      selsChange (sels) {
+        this.sels = sels
       }
     },
     mounted () {
-      this.getArrayData()
+      this.handleEdit()
+      // this.getArrayData()
     },
     components: {
       UE,

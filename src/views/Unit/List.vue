@@ -53,11 +53,7 @@
         :sortable="item.sortable">
       </el-table-column>
       <!-- 时间戳转日期 -->
-      <el-table-column prop="start_time" label="开始时间" width="180">
-      </el-table-column>
-      <el-table-column prop="end_time" label="结束时间" width="180">
-      </el-table-column>
-      <el-table-column prop="update_time" label="更新时间" width="180" :formatter="formateTime">
+      <el-table-column prop="update_time" label="更新时间" width="180">
       </el-table-column>
       <!-- 图片显示 -->
       <!--<el-table-column prop="cover" label="封面图片" width="130">-->
@@ -81,25 +77,26 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="140" fixed="right">
+      <el-table-column label="操作" width="290" fixed="right">
         <template slot-scope="scope">
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">企业成员</el-button>
           <el-button size="small"
                      @click="statusSubmit(scope.$index, scope.row)"
                      :disabled="scope.row.status === -1">
             {{ scope.row.status === 1 ? '停用' : scope.row.status === 0 ? '启用' : '已删除' }}
           </el-button>
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <!--<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>-->
+          <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <!--工具条-->
     <el-col :span="24" class="toolbar">
-      <!--<el-button type="danger"-->
-                 <!--@click="batchAction('remove')"-->
-                 <!--:disabled="this.sels.length===0">批量删除-->
-      <!--</el-button>-->
+      <el-button type="danger"
+                 @click="batchAction('remove')"
+                 :disabled="this.sels.length===0">批量删除
+      </el-button>
       <el-button type="warning"
                  @click="batchAction('disable')"
                  :disabled="this.sels.length===0">批量禁用
@@ -119,7 +116,7 @@
 <script>
   import util from '@/utils/js'
 
-  const MODEL_NAME = 'Survey' // API模块名
+  const MODEL_NAME = 'Unit' // API模块名
 
   export default {
     data () {
@@ -127,24 +124,30 @@
         // 列表表头数据
         tableColumn: [
           {
-            prop: 'title',
-            label: '问卷标题',
+            prop: 'name',
+            label: '企业名称',
+            width: 150,
+            sortable: false
+          },
+          {
+            prop: 'address',
+            label: '通讯地址',
             width: 180,
             sortable: false
           },
           {
-            prop: 'intro',
-            label: '问卷介绍',
-            width: 230,
+            prop: 'phone',
+            label: '联系电话',
+            width: 130,
             sortable: false
           }
         ],
         // 搜索条件
         filters: {
           value: '',
-          key: 'title',
+          key: 'name',
           options: [
-            {value: 'title', label: '问卷标题'}
+            {value: 'name', label: '企业名称'}
           ]
         },
         list: [],
@@ -172,7 +175,7 @@
           key: this.filters.key, // 可选参数查询
           value: this.filters.value // 可选参数查询
         }
-        const res = await this.$http.post(`${MODEL_NAME}/actlist`, params)
+        const res = await this.$http.post(`${MODEL_NAME}/list`, params)
         this.listLoading = false
         if (res === null) return
         this.total = res.param.pages.total
@@ -185,11 +188,10 @@
           type: 'warning'
         }).then(async () => {
           let params = {
-            id: row.id,
+            ids: row.id,
             status: -1
           }
-
-          const res = await this.$http.post(`${MODEL_NAME}/delete`, params)
+          const res = await this.$http.post(`${MODEL_NAME}/status`, params)
           if (res === null) return
           this.$message({
             message: '状态修改成功',
@@ -214,7 +216,7 @@
       // 修改状态
       async statusSubmit (index, row) {
         let params = {
-          id: row.id,
+          ids: row.id,
           status: 1 - row.status
         }
 
