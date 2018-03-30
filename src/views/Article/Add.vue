@@ -14,6 +14,7 @@
       <el-form-item label="标题" prop="title">
         <el-input v-model="formData.title"
                   placeholder="请输入内容"
+                  @change="changeShareTitle"
                   auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="简称" prop="abbr">
@@ -210,6 +211,20 @@
             <i class="el-icon-close" @click="handleDelete(index)"></i></li>
         </ul>
       </el-form-item>
+      <el-form-item label="分享标题" prop="share_title">
+        <el-input v-model="formData.share_title"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="分享图片" prop="share_img">
+        <i-uploader v-model="formData.share_img"></i-uploader>
+      </el-form-item>
+      <el-form-item label="分享描述" prop="share_describe">
+        <el-input v-model="formData.share_describe"
+                  type="textarea"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
 
       <el-dialog title="富文本内容预览" :visible.sync="dialogTableVisible">
         <template>
@@ -336,20 +351,6 @@
             prop: 'sort',
             label: '排序'
           }
-//          {
-//            type: 'select',
-//            prop: 'is_show',
-//            label: '是否显示新闻发现时间',
-//            option: 'is_show', // 下拉列表数据别名
-//            labelProp: 'label', // 下拉列表数组内元素 label 别名
-//            valueProp: 'value', // 下拉列表数组内元素 value 别名
-//            placeholder: '请输入内容'
-//          },
-//          {
-//            type: 'time',
-//            prop: 'news_time',
-//            label: '新闻发生时间'
-//          }
         ],
         // 下拉列表数据
         options: {
@@ -441,13 +442,19 @@
 //          con_type: '',
           con_title: [''],
           policy_code: '',
-          red_title: ''
+          red_title: '',
+          share_title: '',
+          share_img: '',
+          share_describe: ''
         }
       }
     },
     methods: {
       handleCancel () {
         this.$router.back()
+      },
+      changeShareTitle () {
+        this.formData.share_title = this.formData.title
       },
       handleChange (file, fileList) {
         this.fileslist = fileList.slice(-3)

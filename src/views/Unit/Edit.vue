@@ -84,19 +84,29 @@
         </el-row>
       </el-form-item>
       <el-form-item label="企业人员">
-        <el-tabs v-model="formData.human" type="card">
-          <el-tab-pane label="总裁" name="ceo" style="margin-left: 10px;">
+        <p class="no-man" v-if="formData.member_info.length === 0">暂未填写企业人员信息！</p>
+        <el-tabs v-model="member_type" type="card" class="man-info">
+          <el-tab-pane :label="item.job" :name="item.job" style="margin-left: 10px;" v-for="(item, index) in formData.member_info" :key="index">
             <el-form>
               <el-form-item>
-                姓名：<el-input style="width: 50%; margin-left: 20px;" v-model="formData.human" placeholder="请输入内容" auto-complete="off"></el-input>
+                姓名：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.name" placeholder="请输入内容" auto-complete="off"></el-input>
               </el-form-item>
               <el-form-item>
-                电话：<el-input style="width: 50%; margin-left: 20px;" v-model="formData.human" placeholder="请输入内容" auto-complete="off"></el-input>
+                职务：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.job" placeholder="请输入内容" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item>
+                座机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.office_tel" placeholder="请输入内容" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item>
+                手机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.tel" placeholder="请输入内容" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item>
+                职责：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.duty" placeholder="请输入内容" auto-complete="off"></el-input>
               </el-form-item>
             </el-form>
           </el-tab-pane>
-          <el-tab-pane label="人力" name="human" style="margin-left: 10px;">人力</el-tab-pane>
-          <el-tab-pane label="其他职位" name="other" style="margin-left: 10px;">其他职位</el-tab-pane>
+          <!--<el-tab-pane label="人力" name="human" style="margin-left: 10px;">人力</el-tab-pane>-->
+          <!--<el-tab-pane label="其他职位" name="other" style="margin-left: 10px;">其他职位</el-tab-pane>-->
         </el-tabs>
       </el-form-item>
       <!-- 富文本 -->
@@ -146,6 +156,7 @@
          * label 对应表单名称
          * placeholder 对应提示信息
          */
+        member_type: '总裁',
         formItems: [
           {
             type: 'text',
@@ -198,7 +209,7 @@
           name: '',
           address: '',
           phone: '',
-          human: 'ceo'
+          member_info: []
         }
       }
     },
@@ -249,6 +260,7 @@
               //   _next_open_ = new Date(this.formData.next_open).getTime() / 1000
               // }
               let params = Object.assign({}, this.formData)
+              params.member_info = JSON.stringify(this.formData.member_info)
               // params.next_open = _next_open_ // 后台接收10位时间戳，需要转换
 //              params.detail = this.getUEContent('ue') // 富文本内容
 //              params.images = this.getImageList('album') // 多图上传
@@ -289,5 +301,12 @@
 </script>
 
 <style lang="scss" scoped>
-
+  .no-man {
+    margin-top: 0;
+  }
+  .man-info {
+    width: 100%;
+    margin-top: -40px;
+    float: left;
+  }
 </style>

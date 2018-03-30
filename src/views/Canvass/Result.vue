@@ -1,7 +1,7 @@
 <template>
   <section>
     <!--工具条-->
-    <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+    <el-col :span="24" class="toolbar" style="padding: 0px;">
       <el-form :inline="true" :model="filters">
         <el-form-item>
           <el-input v-model="filters.value" placeholder="关键词"></el-input>
@@ -28,8 +28,7 @@
           </el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary"
-                     @click="handleAdd">新增
+          <el-button @click="handleBack">返回
           </el-button>
         </el-form-item>
       </el-form>
@@ -37,61 +36,20 @@
 
     <!--列表-->
     <el-table :data="list"
-              highlight-current-row
-              v-loading="listLoading"
-              @selection-change="selsChange"
-              style="width: 100%;">
-      <el-table-column type="selection" width="55">
+               border
+               v-loading="listLoading"
+               @selection-change="selsChange"
+               style="width: 100%;">
+      <el-table-column prop="q_content" label="问题描述" min-width="200">
       </el-table-column>
-      <!-- 普通列表显示 -->
-      <el-table-column
-        v-for="(item,index) in tableColumn"
-        :key="index"
-        :prop="item.prop"
-        :label="item.label"
-        :min-width="item.width"
-        :sortable="item.sortable">
-      </el-table-column>
-      <!-- 时间戳转日期 -->
-      <el-table-column prop="start_time" label="开始时间" width="180">
-      </el-table-column>
-      <el-table-column prop="end_time" label="结束时间" width="180">
-      </el-table-column>
-      <el-table-column prop="update_time" label="更新时间" width="180" :formatter="formateTime">
-      </el-table-column>
-      <!-- 图片显示 -->
-      <!--<el-table-column prop="cover" label="封面图片" width="130">-->
-        <!--<template slot-scope="scope">-->
-          <!--<el-popover trigger="hover" placement="top">-->
-            <!--<div class="ad-img">-->
-              <!--<img :src="scope.row.cover" :alt="scope.row.name" width="200" height="auto"-->
-                   <!--v-if="scope.row.cover !== ''">-->
-              <!--<p v-else>暂无图片</p>-->
-            <!--</div>-->
-            <!--<div slot="reference" class="name-wrapper">-->
-              <!--<el-tag>查看图片</el-tag>-->
-            <!--</div>-->
-          <!--</el-popover>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <el-table-column prop="status" label="状态" width="100">
+      <el-table-column label="选项" min-width="200">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'gray' : 'danger'">
-            {{ scope.row.status === 1 ? '可用' : scope.row.status === -1 ? '已删除' : '不可用' }}
-          </el-tag>
+          <p class="q-options" v-for="(item, index) in scope.row.answer" :key="index">{{ item.a_content }}</p>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="320" fixed="right">
+      <el-table-column label="人数统计" min-width="120">
         <template slot-scope="scope">
-          <el-button size="small" @click="handleResult(scope.$index, scope.row)">结果统计</el-button>
-          <el-button size="small" @click="handleMember(scope.$index, scope.row)">参与企业</el-button>
-          <el-button size="small"
-                     @click="statusSubmit(scope.$index, scope.row)"
-                     :disabled="scope.row.status === -1">
-            {{ scope.row.status === 1 ? '停用' : scope.row.status === 0 ? '启用' : '已删除' }}
-          </el-button>
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <!--<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>-->
+          <p class="q-options" v-for="(item, index) in scope.row.answer" :key="index">{{ item.count }}</p>
         </template>
       </el-table-column>
     </el-table>
@@ -102,18 +60,18 @@
                  <!--@click="batchAction('remove')"-->
                  <!--:disabled="this.sels.length===0">批量删除-->
       <!--</el-button>-->
-      <el-button type="warning"
-                 @click="batchAction('disable')"
-                 :disabled="this.sels.length===0">批量禁用
-      </el-button>
-      <el-button type="primary"
-                 @click="batchAction('active')"
-                 :disabled="this.sels.length===0">批量启用
-      </el-button>
-      <el-pagination layout="prev, pager, next"
-                     @current-change="handleCurrentChange"
-                     :page-size="pagesize"
-                     :total="total" style="float:right;"></el-pagination>
+      <!--<el-button type="warning"-->
+                 <!--@click="batchAction('disable')"-->
+                 <!--:disabled="this.sels.length===0">批量禁用-->
+      <!--</el-button>-->
+      <!--<el-button type="primary"-->
+                 <!--@click="batchAction('active')"-->
+                 <!--:disabled="this.sels.length===0">批量启用-->
+      <!--</el-button>-->
+      <!--<el-pagination layout="prev, pager, next"-->
+                     <!--@current-change="handleCurrentChange"-->
+                     <!--:page-size="pagesize"-->
+                     <!--:total="total" style="float:right;"></el-pagination>-->
     </el-col>
   </section>
 </template>
@@ -144,9 +102,9 @@
         // 搜索条件
         filters: {
           value: '',
-          key: 'title',
+          key: 'q_content',
           options: [
-            {value: 'title', label: '问卷标题'}
+            {value: 'q_content', label: '问题描述'}
           ]
         },
         list: [],
@@ -172,9 +130,10 @@
         let params = {
           page: this.page,
           key: this.filters.key, // 可选参数查询
-          value: this.filters.value // 可选参数查询
+          value: this.filters.value, // 可选参数查询
+          id: this.$route.params.id
         }
-        const res = await this.$http.post(`${MODEL_NAME}/actlist`, params)
+        const res = await this.$http.post(`${MODEL_NAME}/count`, params)
         this.listLoading = false
         if (res === null) return
         this.total = res.param.pages.total
@@ -190,7 +149,6 @@
             id: row.id,
             status: -1
           }
-
           const res = await this.$http.post(`${MODEL_NAME}/delete`, params)
           if (res === null) return
           this.$message({
@@ -213,13 +171,9 @@
         console.log(this.$route.path)
         this.$router.push(`${this.$route.path}/add`)
       },
-      handleMember (index, row) {
+      handleBack () {
         console.log(this.$route.path)
-        this.$router.push(`${this.$route.path}/member/${row.id}`)
-      },
-      handleResult (index, row) {
-        console.log(this.$route.path)
-        this.$router.push(`${this.$route.path}/result/${row.id}`)
+        this.$router.back()
       },
       // 修改状态
       async statusSubmit (index, row) {
@@ -289,4 +243,11 @@
 </script>
 
 <style lang="scss">
+  .q-options {
+    /*height:36px;*/
+    /*line-height: 36px;*/
+    border-bottom: solid 1px #d9d9d9;
+    /*display: inline-block;*/
+    /*color: #f00;*/
+  }
 </style>

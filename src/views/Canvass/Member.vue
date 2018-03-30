@@ -28,8 +28,7 @@
           </el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary"
-                     @click="handleAdd">新增
+          <el-button @click="handleBack">返回
           </el-button>
         </el-form-item>
       </el-form>
@@ -37,79 +36,35 @@
 
     <!--列表-->
     <el-table :data="list"
-              highlight-current-row
+              border
               v-loading="listLoading"
               @selection-change="selsChange"
               style="width: 100%;">
-      <el-table-column type="selection" width="55">
-      </el-table-column>
-      <!-- 普通列表显示 -->
-      <el-table-column
-        v-for="(item,index) in tableColumn"
-        :key="index"
-        :prop="item.prop"
-        :label="item.label"
-        :min-width="item.width"
-        :sortable="item.sortable">
-      </el-table-column>
-      <!-- 时间戳转日期 -->
-      <el-table-column prop="start_time" label="开始时间" width="180">
-      </el-table-column>
-      <el-table-column prop="end_time" label="结束时间" width="180">
-      </el-table-column>
-      <el-table-column prop="update_time" label="更新时间" width="180" :formatter="formateTime">
-      </el-table-column>
-      <!-- 图片显示 -->
-      <!--<el-table-column prop="cover" label="封面图片" width="130">-->
-        <!--<template slot-scope="scope">-->
-          <!--<el-popover trigger="hover" placement="top">-->
-            <!--<div class="ad-img">-->
-              <!--<img :src="scope.row.cover" :alt="scope.row.name" width="200" height="auto"-->
-                   <!--v-if="scope.row.cover !== ''">-->
-              <!--<p v-else>暂无图片</p>-->
-            <!--</div>-->
-            <!--<div slot="reference" class="name-wrapper">-->
-              <!--<el-tag>查看图片</el-tag>-->
-            <!--</div>-->
-          <!--</el-popover>-->
-        <!--</template>-->
+      <!--<el-table-column prop="id" label="ID" min-width="60">-->
       <!--</el-table-column>-->
-      <el-table-column prop="status" label="状态" width="100">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'gray' : 'danger'">
-            {{ scope.row.status === 1 ? '可用' : scope.row.status === -1 ? '已删除' : '不可用' }}
-          </el-tag>
-        </template>
+      <el-table-column prop="name" label="姓名" min-width="180">
       </el-table-column>
-      <el-table-column label="操作" width="320" fixed="right">
-        <template slot-scope="scope">
-          <el-button size="small" @click="handleResult(scope.$index, scope.row)">结果统计</el-button>
-          <el-button size="small" @click="handleMember(scope.$index, scope.row)">参与企业</el-button>
-          <el-button size="small"
-                     @click="statusSubmit(scope.$index, scope.row)"
-                     :disabled="scope.row.status === -1">
-            {{ scope.row.status === 1 ? '停用' : scope.row.status === 0 ? '启用' : '已删除' }}
-          </el-button>
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <!--<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>-->
-        </template>
+      <el-table-column prop="phone" label="联系电话" min-width="180">
+      </el-table-column>
+      <el-table-column prop="company" label="所属公司" min-width="220">
       </el-table-column>
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="toolbar">
+    <el-col :span="24" class="toolbar" style="display: flex; justify-content: space-between; align-items: center;">
       <!--<el-button type="danger"-->
                  <!--@click="batchAction('remove')"-->
                  <!--:disabled="this.sels.length===0">批量删除-->
       <!--</el-button>-->
-      <el-button type="warning"
-                 @click="batchAction('disable')"
-                 :disabled="this.sels.length===0">批量禁用
-      </el-button>
-      <el-button type="primary"
-                 @click="batchAction('active')"
-                 :disabled="this.sels.length===0">批量启用
-      </el-button>
+      <!--<el-button type="warning"-->
+                 <!--@click="batchAction('disable')"-->
+                 <!--:disabled="this.sels.length===0">批量禁用-->
+      <!--</el-button>-->
+      <!--<el-button type="primary"-->
+                 <!--@click="batchAction('active')"-->
+                 <!--:disabled="this.sels.length===0">批量启用-->
+      <!--</el-button>-->
+      <p>共计  <span style="font-weight: bold; color: #f00">{{ total }}</span>  家企业已填写该调查表</p>
       <el-pagination layout="prev, pager, next"
                      @current-change="handleCurrentChange"
                      :page-size="pagesize"
@@ -129,6 +84,12 @@
         // 列表表头数据
         tableColumn: [
           {
+            prop: 'id',
+            label: 'id',
+            width: 80,
+            sortable: false
+          },
+          {
             prop: 'title',
             label: '问卷标题',
             width: 180,
@@ -144,9 +105,9 @@
         // 搜索条件
         filters: {
           value: '',
-          key: 'title',
+          key: 'name',
           options: [
-            {value: 'title', label: '问卷标题'}
+            {value: 'name', label: '姓名'}
           ]
         },
         list: [],
@@ -170,11 +131,12 @@
       async getListData () {
         this.listLoading = true
         let params = {
+          id: this.$route.params.id,
           page: this.page,
           key: this.filters.key, // 可选参数查询
           value: this.filters.value // 可选参数查询
         }
-        const res = await this.$http.post(`${MODEL_NAME}/actlist`, params)
+        const res = await this.$http.post(`${MODEL_NAME}/user`, params)
         this.listLoading = false
         if (res === null) return
         this.total = res.param.pages.total
@@ -213,13 +175,9 @@
         console.log(this.$route.path)
         this.$router.push(`${this.$route.path}/add`)
       },
-      handleMember (index, row) {
+      handleBack () {
         console.log(this.$route.path)
-        this.$router.push(`${this.$route.path}/member/${row.id}`)
-      },
-      handleResult (index, row) {
-        console.log(this.$route.path)
-        this.$router.push(`${this.$route.path}/result/${row.id}`)
+        this.$router.back()
       },
       // 修改状态
       async statusSubmit (index, row) {

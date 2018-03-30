@@ -77,9 +77,8 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="290" fixed="right">
+      <el-table-column label="操作" width="200" fixed="right">
         <template slot-scope="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">企业成员</el-button>
           <el-button size="small"
                      @click="statusSubmit(scope.$index, scope.row)"
                      :disabled="scope.row.status === -1">
@@ -132,13 +131,19 @@
           {
             prop: 'address',
             label: '通讯地址',
-            width: 180,
+            width: 220,
             sortable: false
           },
           {
             prop: 'phone',
             label: '联系电话',
             width: 130,
+            sortable: false
+          },
+          {
+            prop: 'code',
+            label: '验证码',
+            width: 120,
             sortable: false
           }
         ],

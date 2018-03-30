@@ -14,6 +14,7 @@
       <el-form-item label="标题" prop="title">
         <el-input v-model="formData.title"
                   placeholder="请输入内容"
+                  @change="changeShareTitle"
                   auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="简称" prop="abbr">
@@ -209,6 +210,20 @@
             <label class="el-upload-list__item-status-label"><i class="el-icon-upload-success el-icon-circle-check"></i></label>
             <i class="el-icon-close" @click="handleDelete(index)"></i></li>
         </ul>
+      </el-form-item>
+      <el-form-item label="分享标题" prop="share_title">
+        <el-input v-model="formData.share_title"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="分享图片" prop="share_img">
+        <i-uploader v-model="formData.share_img"></i-uploader>
+      </el-form-item>
+      <el-form-item label="分享描述" prop="share_describe">
+        <el-input v-model="formData.share_describe"
+                  type="textarea"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
       </el-form-item>
 
       <el-dialog title="富文本内容预览" :visible.sync="dialogTableVisible">
@@ -438,13 +453,19 @@
           con_title: [''],
           policy_code: '',
           red_title: '',
-          img: ''
+          img: '',
+          share_title: '',
+          share_img: '',
+          share_describe: ''
         }
       }
     },
     methods: {
       handleCancel () {
         this.$router.back()
+      },
+      changeShareTitle () {
+        this.formData.share_title = this.formData.title
       },
       handleChange (file, fileList) {
         this.fileslist = fileList.slice(-3)

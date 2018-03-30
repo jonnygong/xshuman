@@ -53,10 +53,6 @@
         :sortable="item.sortable">
       </el-table-column>
       <!-- 时间戳转日期 -->
-      <el-table-column prop="start_time" label="开始时间" width="180">
-      </el-table-column>
-      <el-table-column prop="end_time" label="结束时间" width="180">
-      </el-table-column>
       <el-table-column prop="update_time" label="更新时间" width="180" :formatter="formateTime">
       </el-table-column>
       <!-- 图片显示 -->
@@ -81,27 +77,25 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="320" fixed="right">
+      <el-table-column label="操作" width="240" fixed="right">
         <template slot-scope="scope">
-          <el-button size="small" @click="handleResult(scope.$index, scope.row)">结果统计</el-button>
-          <el-button size="small" @click="handleMember(scope.$index, scope.row)">参与企业</el-button>
           <el-button size="small"
                      @click="statusSubmit(scope.$index, scope.row)"
                      :disabled="scope.row.status === -1">
             {{ scope.row.status === 1 ? '停用' : scope.row.status === 0 ? '启用' : '已删除' }}
           </el-button>
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <!--<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>-->
+          <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <!--工具条-->
     <el-col :span="24" class="toolbar">
-      <!--<el-button type="danger"-->
-                 <!--@click="batchAction('remove')"-->
-                 <!--:disabled="this.sels.length===0">批量删除-->
-      <!--</el-button>-->
+      <el-button type="danger"
+                 @click="batchAction('remove')"
+                 :disabled="this.sels.length===0">批量删除
+      </el-button>
       <el-button type="warning"
                  @click="batchAction('disable')"
                  :disabled="this.sels.length===0">批量禁用
@@ -121,7 +115,7 @@
 <script>
   import util from '@/utils/js'
 
-  const MODEL_NAME = 'Survey' // API模块名
+  const MODEL_NAME = 'Hospital' // API模块名
 
   export default {
     data () {
@@ -129,24 +123,18 @@
         // 列表表头数据
         tableColumn: [
           {
-            prop: 'title',
-            label: '问卷标题',
-            width: 180,
-            sortable: false
-          },
-          {
-            prop: 'intro',
-            label: '问卷介绍',
-            width: 230,
+            prop: 'name',
+            label: '分类名称',
+            width: 120,
             sortable: false
           }
         ],
         // 搜索条件
         filters: {
           value: '',
-          key: 'title',
+          key: 'name',
           options: [
-            {value: 'title', label: '问卷标题'}
+            {value: 'name', label: '分类名称'}
           ]
         },
         list: [],
@@ -174,7 +162,7 @@
           key: this.filters.key, // 可选参数查询
           value: this.filters.value // 可选参数查询
         }
-        const res = await this.$http.post(`${MODEL_NAME}/actlist`, params)
+        const res = await this.$http.post(`${MODEL_NAME}/list`, params)
         this.listLoading = false
         if (res === null) return
         this.total = res.param.pages.total
@@ -212,14 +200,6 @@
       handleAdd () {
         console.log(this.$route.path)
         this.$router.push(`${this.$route.path}/add`)
-      },
-      handleMember (index, row) {
-        console.log(this.$route.path)
-        this.$router.push(`${this.$route.path}/member/${row.id}`)
-      },
-      handleResult (index, row) {
-        console.log(this.$route.path)
-        this.$router.push(`${this.$route.path}/result/${row.id}`)
       },
       // 修改状态
       async statusSubmit (index, row) {

@@ -64,7 +64,9 @@ const SET_SIDE_NAV = (state, nav) => {
     'Admin/User/intro': {iconCls: '', url: '/user/intro'},
     'Admin/User/summary': {iconCls: '', url: '/user/summary'},
     'Admin/Canvass/list': {iconCls: '', url: '/canvass/list'},
-    'Admin/Company/list': {iconCls: '', url: '/unit/list'}
+    'Admin/Company/list': {iconCls: '', url: '/unit/list'},
+    '图片管理': {iconCls: 'fa fa-flag', url: ''},
+    'Admin/Image/list': {iconCls: '', url: '/image/list'}
   }
   for (let key in nav) {
     let item = nav[key]

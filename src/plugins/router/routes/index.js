@@ -184,6 +184,18 @@ let routes = [
         component: () => import('@/views/Canvass/Add.vue'),
         name: '民意调查新增',
         meta: {requiresAuth: true, alias: 'Admin/Canvass/list'}
+      },
+      {
+        path: 'list/member/:id',
+        component: () => import('@/views/Canvass/Member.vue'),
+        name: '民意调查参与人员',
+        meta: {requiresAuth: true, alias: 'Admin/Canvass/list'}
+      },
+      {
+        path: 'list/result/:id',
+        component: () => import('@/views/Canvass/Result.vue'),
+        name: '民意调查统计',
+        meta: {requiresAuth: true, alias: 'Admin/Canvass/list'}
       }
     ]
   },
@@ -556,6 +568,26 @@ let routes = [
         component: () => import('@/views/Unit/Add.vue'),
         name: '企业成员新增',
         meta: {requiresAuth: true, alias: 'Admin/Company/list'}
+      }
+    ]
+  },
+  // 图片管理
+  {
+    path: '/image',
+    component: Main,
+    name: '图片管理',
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/Image/List.vue'),
+        name: '图片管理分类列表',
+        meta: {requiresAuth: true, alias: 'Admin/Image/list'}
+      },
+      {
+        path: 'list/show/:id',
+        component: () => import('@/views/Image/Show.vue'),
+        name: '图片展示',
+        meta: {requiresAuth: true, alias: 'Admin/Image/list'}
       }
     ]
   },

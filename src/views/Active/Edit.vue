@@ -1,6 +1,12 @@
 <template>
   <div class="form-wrapper">
     <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+      <el-form-item label="活动名称" prop="title">
+        <el-input v-model="formData.title"
+                  placeholder="请输入内容"
+                  @change="changeShareTitle"
+                  auto-complete="off"></el-input>
+      </el-form-item>
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -98,6 +104,20 @@
             </el-row>
           </el-col>
       </el-form-item>
+      <el-form-item label="分享标题" prop="share_title">
+        <el-input v-model="formData.share_title"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="分享图片" prop="share_img">
+        <i-uploader v-model="formData.share_img"></i-uploader>
+      </el-form-item>
+      <el-form-item label="分享描述" prop="share_describe">
+        <el-input v-model="formData.share_describe"
+                  type="textarea"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
 
       <el-dialog title="富文本内容预览" :visible.sync="dialogTableVisible">
         <template>
@@ -144,11 +164,11 @@
          * placeholder 对应提示信息
          */
         formItems: [
-          {
-            type: 'text',
-            prop: 'title',
-            label: '活动名称'
-          },
+//          {
+//            type: 'text',
+//            prop: 'title',
+//            label: '活动名称'
+//          },
           {
             type: 'period',
             start_prop: 'start_time',
@@ -225,13 +245,19 @@
           total_num: '',
           intro: '',
           pre_num: '',
-          img: ''
+          img: '',
+          share_title: '',
+          share_img: '',
+          share_describe: ''
         }
       }
     },
     methods: {
       handleCancel () {
         this.$router.back()
+      },
+      changeShareTitle () {
+        this.formData.share_title = this.formData.title
       },
       // 显示编辑界面
       async handleEdit (index, row) {
