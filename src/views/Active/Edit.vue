@@ -98,6 +98,7 @@
         <el-col>
             <el-row :span="12">
               <UE :defaultMsg="formData.intro" ref="ue"></UE>
+              <!--<vue-editor useCustomImageHandler @imageAdded="handleImageAdded" v-model="formData.intro"></vue-editor>-->
             </el-row>
             <el-row :span="12">
               <el-button class="showUEContent" type="primary" @click="showUEContent">预览</el-button>
@@ -139,6 +140,7 @@
   import Uploader from '@/components/Uploader/Uploader'
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
+  import { VueEditor } from 'vue2-editor'
 
   const MODEL_NAME = 'Active' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
@@ -154,6 +156,7 @@
       }
       return {
         dialogTableVisible: false,
+        imgUrl: '',
         /**
          * type 'text'(普通文本) 'number'(数值) 'textarea'(文本域)
          *      'period'(时间段)  --> start_prop / end_prop 对应 开始 / 结束 时间字段名称
@@ -366,6 +369,7 @@
     },
     components: {
       UE,
+      VueEditor,
       'i-uploader': Uploader,
       'i-baidu-map': BaiduMap,
       'i-muti-uploader': MutiUploader

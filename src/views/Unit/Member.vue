@@ -16,12 +16,6 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
-        <!--单选框-->
-        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
-          <el-radio :label="option[item.valueProp]"
-                    :key="optionIndex"
-                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
-        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -30,7 +24,7 @@
                               align="right"
                               type="datetime"
                               placeholder="选择开始日期"
-                              style="width: 100%;"></el-date-picker>
+                              style="width: 100%"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
@@ -40,7 +34,7 @@
                               align="right"
                               type="datetime"
                               placeholder="选择结束日期"
-                              style="width: 100%;"></el-date-picker>
+                              style="width: 100%"></el-date-picker>
 
             </el-form-item>
           </el-col>
@@ -51,7 +45,7 @@
                         align="right"
                         type="datetime"
                         :placeholder="item.placeholder ? item.placeholder : '请选择时间' "
-                        style="width: 100%;"></el-date-picker>
+                        style="width: 100%"></el-date-picker>
         <!-- 单图片上传 -->
         <i-uploader v-else-if="item.type === 'upload'"
                     v-model="formData[item.prop]"></i-uploader>
@@ -89,13 +83,39 @@
           </el-col>
         </el-row>
       </el-form-item>
+      <el-form-item label="企业人员">
+        <p class="no-man" v-if="formData.member_info.length === 0">暂未填写企业人员信息！</p>
+        <el-tabs v-model="member_type" type="card" class="man-info">
+          <el-tab-pane :label="item.job" :name="item.job" style="margin-left: 10px;" v-for="(item, index) in formData.member_info" :key="index">
+            <el-form>
+              <el-form-item>
+                姓名：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.name" placeholder="请输入内容" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item>
+                职务：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.job" placeholder="请输入内容" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item>
+                座机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.office_tel" placeholder="请输入内容" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item>
+                手机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.tel" placeholder="请输入内容" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item>
+                职责：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.duty" placeholder="请输入内容" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <!--<el-tab-pane label="人力" name="human" style="margin-left: 10px;">人力</el-tab-pane>-->
+          <!--<el-tab-pane label="其他职位" name="other" style="margin-left: 10px;">其他职位</el-tab-pane>-->
+        </el-tabs>
+      </el-form-item>
       <!-- 富文本 -->
       <!--<el-form-item label="富文本" prop="name">-->
-      <!--<UE :defaultMsg="formData.detail" ref="ue"></UE>-->
+        <!--<UE :defaultMsg="formData.detail" ref="ue"></UE>-->
       <!--</el-form-item>-->
-      <!-- 多图片上传 -->
+      <!--&lt;!&ndash; 多图片上传 &ndash;&gt;-->
       <!--<el-form-item label="多图片上传" prop="images">-->
-      <!--<i-muti-uploader :value="formData.images" ref="album"></i-muti-uploader>-->
+        <!--<i-muti-uploader :value="formData.images" ref="album"></i-muti-uploader>-->
       <!--</el-form-item>-->
       <!-- 自定义表单项目 -->
       <!-- ... -->
@@ -113,19 +133,19 @@
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
 
-  const MODEL_NAME = 'Ads' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
+  const MODEL_NAME = 'Unit' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
   export default {
     data () {
       // 富文本校验
-      // var validateContent = (rule, value, callback) => {
-      //   value = this.$refs['ue'].getUEContent()
-      //   if (value === '') {
-      //     callback(new Error('请输入内容'))
-      //   } else {
-      //     callback()
-      //   }
-      // }
+//      var validateContent = (rule, value, callback) => {
+//        value = this.$refs['ue'].getUEContent()
+//        if (value === '') {
+//          callback(new Error('请输入内容'))
+//        } else {
+//          callback()
+//        }
+//      }
       return {
         /**
          * type 'text'(普通文本) 'number'(数值) 'textarea'(文本域)
@@ -136,82 +156,60 @@
          * label 对应表单名称
          * placeholder 对应提示信息
          */
+        member_type: '总裁',
         formItems: [
-          {
-            type: 'text',
-            prop: 'title',
-            label: '广告名称'
-          },
-          {
-            type: 'radio',
-            prop: 'place_id',
-            label: '广告位位置',
-            option: 'place_id', // 下拉列表数据别名
-            labelProp: 'name', // 下拉列表数组内元素 label 别名
-            valueProp: 'id' // 下拉列表数组内元素 value 别名
-          },
 //          {
-//            type: 'select',
-//            prop: 'place_id',
-//            label: '广告位位置',
-//            option: 'place_id', // 下拉列表数据别名
-//            labelProp: 'name', // 下拉列表数组内元素 label 别名
-//            valueProp: 'id', // 下拉列表数组内元素 value 别名
-//            placeholder: '请输入内容'
+//            type: 'text',
+//            prop: 'name',
+//            label: '企业名称'
 //          },
-          {
-            type: 'number',
-            prop: 'sort',
-            label: '排序',
-            placeholder: '请输入排序' // 不加则显示缺省内容
-          },
-          {
-            type: 'text',
-            prop: 'link',
-            label: '链接地址'
-          },
-          {
-            type: 'period',
-            start_prop: 'start_time',
-            end_prop: 'end_time',
-            label: '活动时间'
-          },
-          {
-            type: 'upload',
-            prop: 'cover',
-            label: '封面图'
-          }
+//          {
+//            type: 'text',
+//            prop: 'address',
+//            label: '通讯地址'
+//          },
+//          {
+//            type: 'text',
+//            prop: 'phone',
+//            label: '联系电话'
+//          }
         ],
         // 下拉列表数据
         options: {
-          place_id: []
+          sale_status: [{value: 2, label: '在售'}, {value: 1, label: '未售'}],
+          type: []
         },
 
         formLoading: false,
         formRules: {
-          cover: [{required: true, message: '请上传封面图片'}],
-          title: [{required: true, message: '请输入广告名称', trigger: 'blur'}],
-          start_time: [
-            {type: 'date', required: true, message: '请输入开始时间', trigger: 'blur'}
-          ],
-          end_time: [
-            {type: 'date', required: true, message: '请输入结束时间', trigger: 'blur'}
-          ],
-          place_id: [
-            {type: 'number', required: true, message: '请选择广告位位置', trigger: 'blur'}
-          ],
-          sort: [
-            {type: 'number', required: true, message: '请输入排序', trigger: 'blur'}
-          ]
+//          sale_status: [
+//            {type: 'number', required: true, message: '请选择区域', trigger: 'blur'}
+//          ],
+//          cover: [{required: true, message: '请上传封面图片'}],
+//          title: [{required: true, message: '请输入项目标题', trigger: 'blur'}],
+//          start_time: [
+//            {type: 'date', required: true, message: '请输入开始时间', trigger: 'blur'}
+//          ],
+//          end_time: [
+//            {type: 'date', required: true, message: '请输入结束时间', trigger: 'blur'}
+//          ],
+//          avg_price: [
+//            {type: 'number', required: true, message: '请输入均价', trigger: 'blur'}
+//          ],
+//          latitude: [
+//            {type: 'number', required: true, message: '请选择纬度', trigger: 'blur'}
+//          ],
+//          longitude: [
+//            {type: 'number', required: true, message: '请选择经度', trigger: 'blur'}
+//          ],
+//          detail: [{validator: validateContent, trigger: 'blur'}]
         },
         // 新增界面数据
         formData: {
-          cover: '',
-          title: '',
-          start_time: '',
-          end_time: '',
-          place_id: '',
-          sort: ''
+          name: '',
+          address: '',
+          phone: '',
+          member_info: []
         }
       }
     },
@@ -231,13 +229,7 @@
         }
         const res = await this.$http.post(`${MODEL_NAME}/info`, params)
         if (res === null) return
-        this.formData = Object.assign({}, res.param.list)
-        this.formData.end_time = new Date(this.formData.end_time * 1000)
-        this.formData.start_time = new Date(this.formData.start_time * 1000)
-        this.options.place_id = res.param.ads
-        // 经纬度需要数值类型，需转换
-        // this.formData.longitude = Number(this.formData.longitude)
-        // this.formData.latitude = Number(this.formData.latitude)
+        this.formData = Object.assign({}, res.param)
       },
       async getArrayData () {
         const res = await this.$http.post(`${MODEL_NAME}/array`)
@@ -261,16 +253,17 @@
             this.$confirm('确认提交吗？', '提示', {}).then(async () => {
               this.formLoading = true
               // 处理时间为时间戳
-              // let _next_open_ = this.formData.next_open;
+              // let _next_open_ = this.formData.next_open
               // if (typeof this.formData.next_open === 'number') {
               //   _next_open_ = this.formData.next_open / 1000
               // } else {
               //   _next_open_ = new Date(this.formData.next_open).getTime() / 1000
               // }
               let params = Object.assign({}, this.formData)
-              // params.next_open = _next_open_; // 后台接收10位时间戳，需要转换
-              // params.detail = this.getUEContent('ue') // 富文本内容
-              // params.images = this.getImageList('album') // 多图上传
+              params.member_info = JSON.stringify(this.formData.member_info)
+              // params.next_open = _next_open_ // 后台接收10位时间戳，需要转换
+//              params.detail = this.getUEContent('ue') // 富文本内容
+//              params.images = this.getImageList('album') // 多图上传
               const res = await this.$http.post(`${MODEL_NAME}/update`, params)
               this.formLoading = false
               if (res === null) return
@@ -308,5 +301,12 @@
 </script>
 
 <style lang="scss" scoped>
-
+  .no-man {
+    margin-top: 0;
+  }
+  .man-info {
+    width: 100%;
+    margin-top: -40px;
+    float: left;
+  }
 </style>

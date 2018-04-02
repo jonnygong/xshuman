@@ -177,6 +177,12 @@
         // 列表表头数据
         tableColumn: [
           {
+            prop: 'sort',
+            label: '排序值',
+            width: 100,
+            sortable: true
+          },
+          {
             prop: 'title',
             label: '文章名称',
             width: 260,

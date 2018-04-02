@@ -16,6 +16,12 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -82,6 +88,9 @@
           </el-col>
         </el-row>
       </el-form-item>
+      <!--<el-form-item label="富文本">-->
+        <!--<vue-editor v-model="content"></vue-editor>-->
+      <!--</el-form-item>-->
       <!-- 富文本 -->
       <!--<el-form-item label="富文本" prop="name">-->
       <!--<UE :defaultMsg="formData.detail" ref="ue"></UE>-->
@@ -105,6 +114,7 @@
   import Uploader from '@/components/Uploader/Uploader'
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
+  import { VueEditor } from 'vue2-editor'
 
   const MODEL_NAME = 'Ads' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
@@ -128,6 +138,7 @@
          * label 对应表单名称
          * placeholder 对应提示信息
          */
+        content: 'sad',
         formItems: [
           {
             type: 'text',
@@ -135,14 +146,22 @@
             label: '广告名称'
           },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'place_id',
             label: '广告位位置',
             option: 'place_id', // 下拉列表数据别名
             labelProp: 'name', // 下拉列表数组内元素 label 别名
-            valueProp: 'id', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'id' // 下拉列表数组内元素 value 别名
           },
+//          {
+//            type: 'select',
+//            prop: 'place_id',
+//            label: '广告位位置',
+//            option: 'place_id', // 下拉列表数据别名
+//            labelProp: 'name', // 下拉列表数组内元素 label 别名
+//            valueProp: 'id', // 下拉列表数组内元素 value 别名
+//            placeholder: '请输入内容'
+//          },
           {
             type: 'number',
             prop: 'sort',
@@ -259,6 +278,7 @@
     },
     components: {
       UE,
+      VueEditor,
       'i-uploader': Uploader,
       'i-baidu-map': BaiduMap,
       'i-muti-uploader': MutiUploader

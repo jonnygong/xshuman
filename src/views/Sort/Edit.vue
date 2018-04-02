@@ -28,14 +28,19 @@
                   auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="模板类型" prop="template">
-        <el-select v-model="formData.template" placeholder="请选择内容">
-          <el-option
-            v-for="(item, index) in options.template"
-            :key="index"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
+        <!--<el-select v-model="formData.template" placeholder="请选择内容">-->
+          <!--<el-option-->
+            <!--v-for="(item, index) in options.template"-->
+            <!--:key="index"-->
+            <!--:label="item.label"-->
+            <!--:value="item.value">-->
+          <!--</el-option>-->
+        <!--</el-select>-->
+        <el-radio-group v-model="formData.template">
+          <el-radio :label="option.value"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options.template">{{ option.label }}</el-radio>
+        </el-radio-group>
       </el-form-item>
       <!--<el-form-item label="内容类型" prop="con_type">-->
         <!--<el-select v-model="formData.con_type" placeholder="请选择内容">-->
@@ -62,6 +67,12 @@
                   v-model.number="formData[item.prop]"
                   :placeholder="item.placeholder ? item.placeholder : '请输入内容' "
                   auto-complete="off"></el-input>
+        <!--单选框-->
+        <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
+          <el-radio :label="option[item.valueProp]"
+                    :key="optionIndex"
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+        </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
           <el-col :span="11">
@@ -172,24 +183,37 @@
       </el-form-item>
       <el-form-item label="章节" prop="con_title" v-show="formData.template === 3">
         <template>
-          <div class="option-item" v-for="(item, index) in formData.con_title">
+          <div class="option-item" v-for="(item, index) in content">
             <el-row>
+              <el-col style="margin-top: -5px;">第{{ index + 1 }}章</el-col>
               <el-col :span="20">
-                <el-input v-model="formData.con_title[index]" placeholder="请输入章节标题" auto-complete="off"></el-input>
-
+                <el-input v-model="item.title[index]" placeholder="请输入章节标题" auto-complete="off"></el-input>
               </el-col>
               <el-col :span="4">
                 <div class="option-btn">
                   <el-button type="success" icon="plus" size="small"
-                             @click="addOption"></el-button>
+                             @click="addOption()"></el-button>
                   <el-button type="warning" icon="close" size="small"
                              @click="delOption(index)"></el-button>
                 </div>
               </el-col>
             </el-row>
-            <el-input class="option-textarea" type="textarea" v-model="content[index]" :key="index"
-                      placeholder="请输入章节内容"
-                      style="display:inline-block" auto-complete="off"></el-input>
+            <div class="option-item" v-for="(con, conIndex) in item.options">
+              <el-row>
+                <el-col :span="20">
+                  <el-input class="option-textarea" type="textarea" v-model="con[index]" :key="index" placeholder="请输入章节内容"
+                            style="display:inline-block" auto-complete="off"></el-input>
+                </el-col>
+                <el-col :span="4">
+                  <div class="option-btn">
+                    <el-button type="success" icon="plus" size="small"
+                               @click="addContent(index)"></el-button>
+                    <el-button type="warning" icon="close" size="small"
+                               @click="delContent(index, conIndex)"></el-button>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
           </div>
         </template>
       </el-form-item>
@@ -312,14 +336,22 @@
 //            placeholder: '请输入内容'
 //          },
           {
-            type: 'select',
+            type: 'radio',
             prop: 'type',
             label: '类型',
             option: 'type', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
-            placeholder: '请输入内容'
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
+//          {
+//            type: 'select',
+//            prop: 'type',
+//            label: '类型',
+//            option: 'type', // 下拉列表数据别名
+//            labelProp: 'label', // 下拉列表数组内元素 label 别名
+//            valueProp: 'value', // 下拉列表数组内元素 value 别名
+//            placeholder: '请输入内容'
+//          },
           {
             type: 'text',
             prop: 'from',
@@ -387,7 +419,8 @@
           ]
         },
         icon_color: '',
-        content: [],
+        content: [{title: '', options: ['']}],
+        UEcontent: '',
         list: [],
         fileslist: [],
         formLoading: false,
@@ -510,22 +543,30 @@
         console.log(err, file, fileList)
       },
       // 新增选项
-      addOption (source) {
-        this.formData.con_title.push('')
-        this.content.push('')
+      addOption () {
+//        this.formData.con_title.push('')
+        this.content.push({title: '', options: ['']})
       },
-//      submitCheckbox (name) {
-//        if (this.validQuestion(this.form)) {
-//          const data = Object.assign({}, this.form)
-//          this.$store.dispatch('addQuestion', data)
-//          this.dialogFormVisible = false
-//        }
-//      },
       // 删除选项
       delOption (index) {
-        if (this.formData.con_title.length > 1) {
-          this.formData.con_title.splice(index, 1)
+        if (this.content.length > 1) {
           this.content.splice(index, 1)
+//          this.content[index].splice(conIndex, 1)
+        } else {
+          this.$message({
+            message: '最后一个啦！',
+            type: 'warning'
+          })
+        }
+      },
+      addContent (index) {
+//        this.formData.con_title.push('')
+        this.content[index].options.push('')
+      },
+      delContent (index, conIndex) {
+        if (this.content[index].options.length > 1) {
+          this.content[index].options.splice(conIndex, 1)
+//          this.content[index].splice(conIndex, 1)
         } else {
           this.$message({
             message: '最后一个啦！',
@@ -538,7 +579,7 @@
         this.options.cat.forEach(item => {
           if (this.formData.c_id === item.id) {
             this.formData.icon = item.color
-            console.log(this.formData.icon)
+//            console.log(this.formData.icon)
           }
         })
         let params = Object.assign(
@@ -558,7 +599,7 @@
         } else {
           params.con_title = ['']
           params.content = this.getUEContent('ue') // 富文本内容
-          console.log(params.con_title)
+//          console.log(params.con_title)
         }
 //              params.content = this.getUEContent('ue') // 富文本内容
         const res = this.$http.post(`${MODEL_NAME}/update`, params)
@@ -566,7 +607,7 @@
         if (res === null) return
 
         this.handleEdit()
-        console.log(this.formData.img)
+//        console.log(this.formData.img)
         this.dialogTableVisible = true
       },
       closeDialog () {
@@ -575,10 +616,10 @@
       changeContype (val) {
         if (val === 1) {
           this.formData.content = ''
-          console.log(typeof this.formData.content)
+//          console.log(typeof this.formData.content)
         } else {
           this.formData.content = []
-          console.log(typeof this.formData.content)
+//          console.log(typeof this.formData.content)
         }
       },
       // 显示编辑界面

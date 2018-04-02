@@ -77,8 +77,9 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="200" fixed="right">
+      <el-table-column label="操作" width="280" fixed="right">
         <template slot-scope="scope">
+          <el-button size="small" @click="handleMember(scope.$index, scope.row)">企业成员</el-button>
           <el-button size="small"
                      @click="statusSubmit(scope.$index, scope.row)"
                      :disabled="scope.row.status === -1">
@@ -212,6 +213,10 @@
       async handleEdit (index, row) {
         console.log(this.$route.path)
         this.$router.push(`${this.$route.path}/edit/${row.id}`)
+      },
+      async handleMember (index, row) {
+        console.log(this.$route.path)
+        this.$router.push(`${this.$route.path}/member/${row.id}`)
       },
       // 显示新增界面
       handleAdd () {

@@ -62,7 +62,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="320" fixed="right">
+      <el-table-column label="操作" width="280" fixed="right">
         <template slot-scope="scope">
           <el-button size="small" @click="handleDuser(scope.$index, scope.row)">添加成员</el-button>
           <el-button size="small"

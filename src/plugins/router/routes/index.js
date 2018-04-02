@@ -564,6 +564,12 @@ let routes = [
         meta: {requiresAuth: true, alias: 'Admin/Company/list'}
       },
       {
+        path: 'list/member/:id',
+        component: () => import('@/views/Unit/Member.vue'),
+        name: '企业人员编辑',
+        meta: {requiresAuth: true, alias: 'Admin/Company/list'}
+      },
+      {
         path: 'list/add',
         component: () => import('@/views/Unit/Add.vue'),
         name: '企业成员新增',

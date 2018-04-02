@@ -83,32 +83,32 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="企业人员">
-        <p class="no-man" v-if="formData.member_info.length === 0">暂未填写企业人员信息！</p>
-        <el-tabs v-model="member_type" type="card" class="man-info">
-          <el-tab-pane :label="item.job" :name="item.job" style="margin-left: 10px;" v-for="(item, index) in formData.member_info" :key="index">
-            <el-form>
-              <el-form-item>
-                姓名：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.name" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-              <el-form-item>
-                职务：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.job" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-              <el-form-item>
-                座机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.office_tel" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-              <el-form-item>
-                手机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.tel" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-              <el-form-item>
-                职责：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.duty" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-            </el-form>
-          </el-tab-pane>
-          <!--<el-tab-pane label="人力" name="human" style="margin-left: 10px;">人力</el-tab-pane>-->
-          <!--<el-tab-pane label="其他职位" name="other" style="margin-left: 10px;">其他职位</el-tab-pane>-->
-        </el-tabs>
-      </el-form-item>
+      <!--<el-form-item label="企业人员">-->
+        <!--<p class="no-man" v-if="formData.member_info.length === 0">暂未填写企业人员信息！</p>-->
+        <!--<el-tabs v-model="member_type" type="card" class="man-info">-->
+          <!--<el-tab-pane :label="item.job" :name="item.job" style="margin-left: 10px;" v-for="(item, index) in formData.member_info" :key="index">-->
+            <!--<el-form>-->
+              <!--<el-form-item>-->
+                <!--姓名：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.name" placeholder="请输入内容" auto-complete="off"></el-input>-->
+              <!--</el-form-item>-->
+              <!--<el-form-item>-->
+                <!--职务：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.job" placeholder="请输入内容" auto-complete="off"></el-input>-->
+              <!--</el-form-item>-->
+              <!--<el-form-item>-->
+                <!--座机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.office_tel" placeholder="请输入内容" auto-complete="off"></el-input>-->
+              <!--</el-form-item>-->
+              <!--<el-form-item>-->
+                <!--手机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.tel" placeholder="请输入内容" auto-complete="off"></el-input>-->
+              <!--</el-form-item>-->
+              <!--<el-form-item>-->
+                <!--职责：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.duty" placeholder="请输入内容" auto-complete="off"></el-input>-->
+              <!--</el-form-item>-->
+            <!--</el-form>-->
+          <!--</el-tab-pane>-->
+          <!--&lt;!&ndash;<el-tab-pane label="人力" name="human" style="margin-left: 10px;">人力</el-tab-pane>&ndash;&gt;-->
+          <!--&lt;!&ndash;<el-tab-pane label="其他职位" name="other" style="margin-left: 10px;">其他职位</el-tab-pane>&ndash;&gt;-->
+        <!--</el-tabs>-->
+      <!--</el-form-item>-->
       <!-- 富文本 -->
       <!--<el-form-item label="富文本" prop="name">-->
         <!--<UE :defaultMsg="formData.detail" ref="ue"></UE>-->

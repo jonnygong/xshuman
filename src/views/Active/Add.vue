@@ -95,6 +95,7 @@
       <!-- 富文本 -->
       <el-form-item label="活动介绍" prop="intro">
         <UE :defaultMsg="formData.intro" ref="ue"></UE>
+        <!--<vue-editor v-model="formData.intro"></vue-editor>-->
       </el-form-item>
       <el-form-item label="分享标题" prop="share_title" @change="changeShareTitle()">
         <el-input v-model="formData.share_title"
@@ -123,6 +124,7 @@
   import Uploader from '@/components/Uploader/Uploader'
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
+  import { VueEditor } from 'vue2-editor'
 
   const MODEL_NAME = 'Active' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
@@ -308,6 +310,7 @@
     },
     components: {
       UE,
+      VueEditor,
       'i-uploader': Uploader,
       'i-baidu-map': BaiduMap,
       'i-muti-uploader': MutiUploader
