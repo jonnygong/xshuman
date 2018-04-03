@@ -590,6 +590,18 @@ let routes = [
         meta: {requiresAuth: true, alias: 'Admin/Image/list'}
       },
       {
+        path: 'list/add',
+        component: () => import('@/views/Image/Add.vue'),
+        name: '图片管理分类列表',
+        meta: {requiresAuth: true, alias: 'Admin/Image/list'}
+      },
+      {
+        path: 'list/edit/:id',
+        component: () => import('@/views/Image/Edit.vue'),
+        name: '图片管理分类列表',
+        meta: {requiresAuth: true, alias: 'Admin/Image/list'}
+      },
+      {
         path: 'list/show/:id',
         component: () => import('@/views/Image/Show.vue'),
         name: '图片展示',

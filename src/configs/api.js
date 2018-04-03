@@ -9,6 +9,7 @@ export default {
   api: {
     // 公共接口
     imageUpload: 'Upload/picture', // 文件上传
+    uploadImage: 'upload/image', // 文件上传
     sysinfoProvince: 'Sysinfo/province', // 省市级三级联动
     sysinfoCity: 'Sysinfo/city', // 省市级三级联动
     sysinfoZone: 'Sysinfo/zone', // 省市级三级联动

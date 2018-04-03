@@ -53,7 +53,7 @@
         :sortable="item.sortable">
       </el-table-column>
       <!-- 时间戳转日期 -->
-      <el-table-column prop="update_time" label="更新时间" width="180" :formatter="formateTime">
+      <el-table-column prop="update_time" label="更新时间" width="180">
       </el-table-column>
       <!-- 图片显示 -->
       <!--<el-table-column prop="cover" label="封面图片" width="130">-->
@@ -77,8 +77,9 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="240" fixed="right">
+      <el-table-column label="操作" width="260" fixed="right">
         <template slot-scope="scope">
+          <el-button size="small" @click="handleImage(scope.$index, scope.row)">图库</el-button>
           <el-button size="small"
                      @click="statusSubmit(scope.$index, scope.row)"
                      :disabled="scope.row.status === -1">
@@ -115,7 +116,7 @@
 <script>
   import util from '@/utils/js'
 
-  const MODEL_NAME = 'Hospital' // API模块名
+  const MODEL_NAME = 'Upload' // API模块名
 
   export default {
     data () {
@@ -127,6 +128,12 @@
             label: '分类名称',
             width: 120,
             sortable: false
+          },
+          {
+            prop: 'sort',
+            label: '排序值',
+            width: 100,
+            sortable: true
           }
         ],
         // 搜索条件
@@ -175,11 +182,11 @@
           type: 'warning'
         }).then(async () => {
           let params = {
-            id: row.id,
+            id: row.Id,
             status: -1
           }
 
-          const res = await this.$http.post(`${MODEL_NAME}/delete`, params)
+          const res = await this.$http.post(`${MODEL_NAME}/status`, params)
           if (res === null) return
           this.$message({
             message: '状态修改成功',
@@ -194,17 +201,21 @@
       // 显示编辑界面
       async handleEdit (index, row) {
         console.log(this.$route.path)
-        this.$router.push(`${this.$route.path}/edit/${row.id}`)
+        this.$router.push(`${this.$route.path}/edit/${row.Id}`)
       },
       // 显示新增界面
       handleAdd () {
         console.log(this.$route.path)
         this.$router.push(`${this.$route.path}/add`)
       },
+      handleImage (index, row) {
+        console.log(this.$route.path)
+        this.$router.push(`${this.$route.path}/show/${row.Id}`)
+      },
       // 修改状态
       async statusSubmit (index, row) {
         let params = {
-          id: row.id,
+          id: row.Id,
           status: 1 - row.status
         }
 
@@ -222,7 +233,7 @@
       // 批量删除
       batchAction (action) {
         // 三种操作：remove disable active
-        let ids = this.sels.map(item => item.id).toString()
+        let ids = this.sels.map(item => item.Id).toString()
         const actions = {
           'remove': {
             tip: '删除',
@@ -246,7 +257,7 @@
           this.listLoading = true
           // 非批量删除，带上 status
           let params = {
-            ids: ids + '',
+            id: ids + '',
             status: actions[action].status
           }
           const res = await this.$http.post(actions[action].api, params)

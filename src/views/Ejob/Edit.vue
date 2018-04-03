@@ -97,6 +97,7 @@
                         type="text"
                         placeholder="请输入内容"
                         auto-complete="off"></el-input>
+              <p style="color: #f00; font-size: 12px; line-height: 24px; margin: 0">*为空则默认为面谈</p>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="2">-</el-col>

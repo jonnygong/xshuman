@@ -3,9 +3,9 @@
     <el-input v-model="cover" placeholder="请输入内容"></el-input>
     <el-upload
       class="avatar-uploader"
-      action="/"
-      :http-request="customUpload"
+      :action="`${this.baseUrl}/upload/image`"
       :show-file-list="false"
+      :on-success="uploadSuccess"
       :before-upload="beforeImageUpload">
       <img v-if="cover" :src="cover" class="avatar">
       <i v-if="!isPhoto" class="el-icon-plus avatar-uploader-icon"></i>
@@ -15,6 +15,8 @@
 </template>
 
 <script>
+  import configs from '@/configs/api'
+  const { baseUrl } = configs
   /**
    * 二次封装 Element UI Uploader组件
    *
@@ -41,6 +43,7 @@
     },
     data () {
       return {
+        baseUrl: baseUrl,
         cover: this.value
       }
     },
@@ -72,29 +75,34 @@
         }
         return isJPG && isLt2M
       },
-      // 处理编辑页面上传
-      customUpload (file) {
-        this._uploadImage(file)
-      },
+      uploadSuccess (response, file, fileList) {
+//        const res = this.$http.post('uploadImage')
+        if (response === null) return
+        this.cover = response.param[0].path
+      }
+//      // 处理编辑页面上传
+//      customUpload (file) {
+//        this._uploadImage(file)
+//      },
       /**
        * 统一上传接口
        * @param file 接收文件对象
        * @private
        */
-      _uploadImage (file) {
-        // 将文件转为 base64 上传至服务器
-        let reader = new FileReader()
-        reader.readAsDataURL(file.file)
-        reader.onload = async () => {
-          // 拿到 base64 代码
-          let params = {
-            pic: reader.result
-          }
-          const res = await this.$http.post('imageUpload', params)
-          if (res === null) return
-          this.cover = res.param.path
-        }
-      }
+//      _uploadImage (file) {
+//        // 将文件转为 base64 上传至服务器
+//        let reader = new FileReader()
+//        reader.readAsDataURL(file.file)
+//        reader.onload = async () => {
+//          // 拿到 base64 代码
+//          let params = {
+//            pic: reader.result
+//          }
+//          const res = await this.$http.post('uploadImage', params)
+//          if (res === null) return
+//          this.cover = res.param.path
+//        }
+//      }
     }
   }
 </script>

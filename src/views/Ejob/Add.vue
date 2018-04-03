@@ -97,6 +97,7 @@
                         placeholder="请输入内容"
                         auto-complete="off"></el-input>
             </el-form-item>
+            <p style="color: #f00; font-size: 12px; line-height: 24px; margin: 0">*为空则默认为面谈</p>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
           <el-col :span="10">
@@ -185,9 +186,36 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="邮箱地址" prop="email">
+      <el-form-item label="岗位要求" prop="job_require">
+        <el-input v-model="formData.work_address"
+                  type="textarea"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="工作地址" prop="work_address">
+        <el-input v-model="formData.work_address"
+                  type="textarea"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="联系人" prop="contacts">
+        <el-input v-model="formData.contacts"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="联系电话" prop="tel">
+        <el-input v-model="formData.tel"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="投递邮箱" prop="email">
         <el-input v-model="formData.email"
                   type="text"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="单位名称" prop="unit_name">
+        <el-input v-model="formData.unit_name"
                   placeholder="请输入内容"
                   auto-complete="off"></el-input>
       </el-form-item>
@@ -246,8 +274,29 @@
           },
           {
             type: 'number',
+            prop: 'gap_num',
+            label: '缺口人数'
+          },
+          {
+            type: 'number',
             prop: 'pnum',
             label: '招聘人数'
+          },
+          {
+            type: 'radio',
+            prop: 'is_send',
+            label: '是否派遣工',
+            option: 'is_send', // 下拉列表数据别名
+            labelProp: 'label', // 下拉列表数组内元素 label 别名
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
+          },
+          {
+            type: 'radio',
+            prop: 'sex',
+            label: '性别要求',
+            option: 'sex', // 下拉列表数据别名
+            labelProp: 'label', // 下拉列表数组内元素 label 别名
+            valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
             type: 'radio',
@@ -273,6 +322,14 @@
             {value: 1, label: '研究生'},
             {value: 2, label: '本科'},
             {value: 3, label: '大专及以下'}
+          ],
+          sex: [
+            {value: 1, label: '男'},
+            {value: 2, label: '女'}
+          ],
+          is_send: [
+            {value: 1, label: '是'},
+            {value: 2, label: '否'}
           ]
         },
         list: [],
@@ -329,6 +386,14 @@
           job_time: '',
           address: '',
           email: '',
+          unit_name: '',
+          gap_num: '',
+          is_send: '',
+          work_address: '',
+          contacts: '',
+          tel: '',
+          sex: '',
+          job_require: '',
           start_salary: '',
           end_salary: '',
           start_job_year: '',

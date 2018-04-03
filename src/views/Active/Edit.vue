@@ -98,6 +98,7 @@
         <el-col>
             <el-row :span="12">
               <UE :defaultMsg="formData.intro" ref="ue"></UE>
+              <!--<div id="WangEditor"></div>-->
               <!--<vue-editor useCustomImageHandler @imageAdded="handleImageAdded" v-model="formData.intro"></vue-editor>-->
             </el-row>
             <el-row :span="12">
@@ -141,6 +142,7 @@
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
   import { VueEditor } from 'vue2-editor'
+  import WangEditor from 'wangeditor'
 
   const MODEL_NAME = 'Active' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
@@ -156,7 +158,6 @@
       }
       return {
         dialogTableVisible: false,
-        imgUrl: '',
         /**
          * type 'text'(普通文本) 'number'(数值) 'textarea'(文本域)
          *      'period'(时间段)  --> start_prop / end_prop 对应 开始 / 结束 时间字段名称
@@ -359,12 +360,25 @@
       getImageList (ele) {
         return this.$refs[ele].getImageList()
       },
+      creatWangeditor () {
+        let that = this
+        this.editor = new WangEditor('#WangEditor')  //这个地方传入div元素的id 需要加#号
+        // 配置 onchange 事件
+        this.editor.change = function () {          // 这里是change 不是官方文档中的 onchange
+          // 编辑区域内容变化时，实时打印出当前内容
+          console.log(this.txt.html())
+        }
+        this.editor.customConfig.uploadImgServer = 'http://xshuman.kfw001.com/api/admin/upload/image'  // 上传图片到服务器
+        this.editor.create()     // 生成编辑器
+        this.editor.txt.html('<p>输入内容...</p>')   //注意：这个地方是txt  不是官方文档中的$txt
+      },
       selsChange (sels) {
         this.sels = sels
       }
     },
     mounted () {
       this.handleEdit()
+//      this.creatWangeditor()
       // this.getArrayData()
     },
     components: {

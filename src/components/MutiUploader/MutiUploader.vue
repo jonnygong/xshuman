@@ -4,9 +4,9 @@
     <el-upload
       class="upload-demo"
       ref="upload"
-      action="/"
+      :action="`${this.baseUrl}/upload/image`"
       :on-remove="handleRemove"
-      :http-request="customMutiUpload"
+      :on-success="uploadSuccess"
       :file-list="images"
       list-type="picture"
       :auto-upload="false"
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+  import configs from '@/configs/api'
+  const { baseUrl } = configs
   /**
    * 二次封装 Element UI 多图 Uploader 组件
    *
@@ -45,6 +47,7 @@
     },
     data () {
       return {
+        baseUrl: baseUrl,
         images: []
       }
     },
@@ -88,35 +91,43 @@
           return _images + ''
         }
       },
-      // 新增页面 批量上传图片
-      customMutiUpload (file) {
-        this._uploadMutiImage(file)
+      uploadSuccess (response, file, fileList) {
+        if (response === null) return
+        let _this = this
+        // 移除预览列表的同时，删除相关联的文件列表数组
+        response.param.forEach((item, index) => {
+          _this.images = item.path
+        })
       },
+      // 新增页面 批量上传图片
+//      customMutiUpload (file) {
+//        this._uploadMutiImage(file)
+//      },
       /**
        * 统一上传接口
        * @param file 接收文件对象
        * @private
        */
-      _uploadMutiImage (file) {
-        // 将文件转为 base64 上传至服务器
-        let reader = new FileReader()
-        reader.readAsDataURL(file.file)
-        let _this = this
-        reader.onload = async () => {
-          // 拿到 base64 代码
-          let params = {
-            pic: reader.result
-          }
-          const res = await this.$http.post('imageUpload', params)
-          if (res === null) return
-          _this.images.push({
-            name: file.file.name,
-            status: 'success',
-            uid: new Date().getTime(),
-            url: res.param.path
-          })
-        }
-      },
+//      _uploadMutiImage (file) {
+//        // 将文件转为 base64 上传至服务器
+//        let reader = new FileReader()
+//        reader.readAsDataURL(file.file)
+//        let _this = this
+//        reader.onload = async () => {
+//          // 拿到 base64 代码
+//          let params = {
+//            pic: reader.result
+//          }
+//          const res = await this.$http.post('uploadImage', params)
+//          if (res === null) return
+//          _this.images.push({
+//            name: file.file.name,
+//            status: 'success',
+//            uid: new Date().getTime(),
+//            url: res.param.path
+//          })
+//        }
+//      },
       // 图片上传前限制条件
       beforeImageUpload (file) {
         const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'

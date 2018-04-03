@@ -83,32 +83,6 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="企业人员">
-        <p class="no-man" v-if="formData.member_info.length === 0">暂未填写企业人员信息！</p>
-        <el-tabs v-model="member_type" type="card" class="man-info" v-if="formData.member_info.length !== 0">
-          <el-tab-pane :label="item.job" :name="item.job" style="margin-left: 10px;" v-for="(item, index) in formData.member_info" :key="index">
-            <el-form>
-              <el-form-item>
-                姓名：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.name" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-              <el-form-item>
-                职务：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.job" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-              <el-form-item>
-                座机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.office_tel" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-              <el-form-item>
-                手机：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.tel" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-              <el-form-item>
-                职责：<el-input style="width: 50%; margin: 5px 20px;" v-model="item.duty" placeholder="请输入内容" auto-complete="off"></el-input>
-              </el-form-item>
-            </el-form>
-          </el-tab-pane>
-          <!--<el-tab-pane label="人力" name="human" style="margin-left: 10px;">人力</el-tab-pane>-->
-          <!--<el-tab-pane label="其他职位" name="other" style="margin-left: 10px;">其他职位</el-tab-pane>-->
-        </el-tabs>
-      </el-form-item>
       <!-- 富文本 -->
       <!--<el-form-item label="富文本" prop="name">-->
         <!--<UE :defaultMsg="formData.detail" ref="ue"></UE>-->
@@ -133,7 +107,7 @@
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
 
-  const MODEL_NAME = 'Unit' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
+  const MODEL_NAME = 'Upload' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
   export default {
     data () {
@@ -156,23 +130,17 @@
          * label 对应表单名称
          * placeholder 对应提示信息
          */
-        member_type: '总裁',
         formItems: [
-//          {
-//            type: 'text',
-//            prop: 'name',
-//            label: '企业名称'
-//          },
-//          {
-//            type: 'text',
-//            prop: 'address',
-//            label: '通讯地址'
-//          },
-//          {
-//            type: 'text',
-//            prop: 'phone',
-//            label: '联系电话'
-//          }
+          {
+            type: 'text',
+            prop: 'name',
+            label: '分类名称'
+          },
+          {
+            type: 'number',
+            prop: 'sort',
+            label: '排序值'
+          }
         ],
         // 下拉列表数据
         options: {
@@ -207,9 +175,7 @@
         // 新增界面数据
         formData: {
           name: '',
-          address: '',
-          phone: '',
-          member_info: []
+          sort: ''
         }
       }
     },
@@ -230,14 +196,6 @@
         const res = await this.$http.post(`${MODEL_NAME}/info`, params)
         if (res === null) return
         this.formData = Object.assign({}, res.param)
-      },
-      async getArrayData () {
-        const res = await this.$http.post(`${MODEL_NAME}/array`)
-        if (res === null) return
-        this.array = res.param
-        // 搜索选项
-        this.filters.options.type = this.formateOptions(res.param.type)
-        this.filters.options.type.unshift({label: '全部分类', value: ''})
       },
       formateOptions (source) {
         let _data = []
@@ -260,7 +218,6 @@
               //   _next_open_ = new Date(this.formData.next_open).getTime() / 1000
               // }
               let params = Object.assign({}, this.formData)
-              params.member_info = JSON.stringify(this.formData.member_info)
               // params.next_open = _next_open_ // 后台接收10位时间戳，需要转换
 //              params.detail = this.getUEContent('ue') // 富文本内容
 //              params.images = this.getImageList('album') // 多图上传
@@ -301,12 +258,5 @@
 </script>
 
 <style lang="scss" scoped>
-  .no-man {
-    margin-top: 0;
-  }
-  .man-info {
-    width: 100%;
-    margin-top: -40px;
-    float: left;
-  }
+
 </style>

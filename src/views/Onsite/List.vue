@@ -96,7 +96,7 @@
           {
             prop: 'onsite_time',
             label: '招聘会时间',
-            width: 200,
+            width: 230,
             sortable: false
           },
           {
