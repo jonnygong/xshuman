@@ -4,6 +4,7 @@
     <el-upload
       class="upload-demo"
       ref="upload"
+      :data="{category_id: this.id}"
       :action="`${this.baseUrl}/upload/image`"
       :on-remove="handleRemove"
       :on-success="uploadSuccess"
@@ -43,6 +44,10 @@
       value: {
         type: String,
         default: ''
+      },
+      id: {
+        type: Number,
+        default: 1
       }
     },
     data () {

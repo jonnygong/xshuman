@@ -217,7 +217,9 @@
               // } else {
               //   _next_open_ = new Date(this.formData.next_open).getTime() / 1000
               // }
-              let params = Object.assign({}, this.formData)
+              let params = Object.assign({
+                id: this.$route.params.id
+              }, this.formData)
               // params.next_open = _next_open_ // 后台接收10位时间戳，需要转换
 //              params.detail = this.getUEContent('ue') // 富文本内容
 //              params.images = this.getImageList('album') // 多图上传

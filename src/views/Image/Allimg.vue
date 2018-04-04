@@ -28,11 +28,6 @@
           </el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary"
-                     @click="dialogVisibleUpload = true">新增
-          </el-button>
-        </el-form-item>
-        <el-form-item>
           <el-button @click="handleBack">返回
           </el-button>
         </el-form-item>
@@ -257,7 +252,7 @@
           key: this.filters.key, // 可选参数查询
           value: this.filters.value // 可选参数查询
         }
-        const res = await this.$http.post(`${MODEL_NAME}/imglist`, params)
+        const res = await this.$http.post(`${MODEL_NAME}/allimg`, params)
         this.listLoading = false
         if (res === null) return
         this.total = res.param.pages.total

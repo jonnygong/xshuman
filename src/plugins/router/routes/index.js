@@ -602,6 +602,12 @@ let routes = [
         meta: {requiresAuth: true, alias: 'Admin/Image/list'}
       },
       {
+        path: 'list/allimg',
+        component: () => import('@/views/Image/Allimg.vue'),
+        name: '所有图片展示',
+        meta: {requiresAuth: true, alias: 'Admin/Image/list'}
+      },
+      {
         path: 'list/show/:id',
         component: () => import('@/views/Image/Show.vue'),
         name: '图片展示',

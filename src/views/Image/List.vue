@@ -32,6 +32,11 @@
                      @click="handleAdd">新增
           </el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button type="primary"
+                     @click="handleAllimg">所有图片
+          </el-button>
+        </el-form-item>
       </el-form>
     </el-col>
 
@@ -211,6 +216,10 @@
       handleImage (index, row) {
         console.log(this.$route.path)
         this.$router.push(`${this.$route.path}/show/${row.Id}`)
+      },
+      handleAllimg () {
+        console.log(this.$route.path)
+        this.$router.push(`${this.$route.path}/allimg`)
       },
       // 修改状态
       async statusSubmit (index, row) {

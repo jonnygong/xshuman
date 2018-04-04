@@ -88,29 +88,6 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="薪资">
-        <el-row>
-          <el-col :span="10">
-            <el-form-item prop="start_salary">
-              <el-input v-model="formData.start_salary"
-                        type="text"
-                        placeholder="请输入内容"
-                        auto-complete="off"></el-input>
-            </el-form-item>
-            <p style="color: #f00; font-size: 12px; line-height: 24px; margin: 0">*为空则默认为面谈</p>
-          </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="10">
-            <el-form-item prop="end_salary">
-              <el-input v-model="formData.end_salary"
-                        type="text"
-                        placeholder="请输入内容"
-                        auto-complete="off"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col class="line" :span="2">k</el-col>
-        </el-row>
-      </el-form-item>
       <el-form-item label="年龄范围">
         <el-row>
           <el-col :span="10">
@@ -186,8 +163,31 @@
           </el-col>
         </el-row>
       </el-form-item>
+      <el-form-item label="薪资">
+        <el-row>
+          <el-col :span="10">
+            <el-form-item prop="start_salary">
+              <el-input v-model="formData.start_salary"
+                        type="text"
+                        placeholder="请输入内容"
+                        auto-complete="off"></el-input>
+            </el-form-item>
+            <p style="color: #f00; font-size: 12px; line-height: 24px; margin: 0">*为空则默认为面谈</p>
+          </el-col>
+          <el-col class="line" :span="2">-</el-col>
+          <el-col :span="10">
+            <el-form-item prop="end_salary">
+              <el-input v-model="formData.end_salary"
+                        type="text"
+                        placeholder="请输入内容"
+                        auto-complete="off"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col class="line" :span="2">k</el-col>
+        </el-row>
+      </el-form-item>
       <el-form-item label="岗位要求" prop="job_require">
-        <el-input v-model="formData.work_address"
+        <el-input v-model="formData.job_require"
                   type="textarea"
                   placeholder="请输入内容"
                   auto-complete="off"></el-input>
@@ -205,23 +205,6 @@
       </el-form-item>
       <el-form-item label="联系电话" prop="tel">
         <el-input v-model="formData.tel"
-                  placeholder="请输入内容"
-                  auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="投递邮箱" prop="email">
-        <el-input v-model="formData.email"
-                  type="text"
-                  placeholder="请输入内容"
-                  auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="单位名称" prop="unit_name">
-        <el-input v-model="formData.unit_name"
-                  placeholder="请输入内容"
-                  auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="单位地址" prop="address">
-        <el-input v-model="formData.address"
-                  type="textarea"
                   placeholder="请输入内容"
                   auto-complete="off"></el-input>
       </el-form-item>
@@ -292,17 +275,32 @@
           },
           {
             type: 'radio',
-            prop: 'sex',
-            label: '性别要求',
-            option: 'sex', // 下拉列表数据别名
+            prop: 'degree',
+            label: '学历',
+            option: 'degree', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
             valueProp: 'value' // 下拉列表数组内元素 value 别名
           },
           {
+            type: 'text',
+            prop: 'email',
+            label: '投递邮箱'
+          },
+          {
+            type: 'text',
+            prop: 'unit_name',
+            label: '单位名称'
+          },
+          {
+            type: 'textarea',
+            prop: 'address',
+            label: '单位地址'
+          },
+          {
             type: 'radio',
-            prop: 'degree',
-            label: '学历',
-            option: 'degree', // 下拉列表数据别名
+            prop: 'sex',
+            label: '性别要求',
+            option: 'sex', // 下拉列表数据别名
             labelProp: 'label', // 下拉列表数组内元素 label 别名
             valueProp: 'value' // 下拉列表数组内元素 value 别名
           }
@@ -325,7 +323,8 @@
           ],
           sex: [
             {value: 1, label: '男'},
-            {value: 2, label: '女'}
+            {value: 2, label: '女'},
+            {value: 3, label: '不限'}
           ],
           is_send: [
             {value: 1, label: '是'},
@@ -341,7 +340,19 @@
           pnum: [
             {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
           ],
+          gap_num: [
+            {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          is_send: [
+            {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          sex: [
+            {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
+          ],
           address: [
+            {required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          unit_name: [
             {required: true, message: '请输入内容', trigger: 'blur'}
           ],
           email: [
@@ -350,12 +361,12 @@
           degree: [
             {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
           ],
-          start_salary: [
-            {required: true, message: '请输入内容', trigger: 'blur'}
-          ],
-          end_salary: [
-            {required: true, message: '请输入内容', trigger: 'blur'}
-          ],
+//          start_salary: [
+//            {required: true, message: '请输入内容', trigger: 'blur'}
+//          ],
+//          end_salary: [
+//            {required: true, message: '请输入内容', trigger: 'blur'}
+//          ],
           start_job_year: [
             {required: true, message: '请输入内容', trigger: 'blur'}
           ],

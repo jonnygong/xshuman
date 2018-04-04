@@ -661,7 +661,8 @@
 //              }
 //              params.news_time = newsTime // 后台接收10位时间戳，需要转换
               if (this.formData.template === 3) {
-                params.content = this.content
+                params.content = this.content.options
+                params.con_title = this.content.title
               } else {
                 params.content = this.getUEContent('ue') // 富文本内容
               }
