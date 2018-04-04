@@ -15,7 +15,8 @@ const {baseUrl} = configs
 axios.defaults.baseURL = baseUrl
 
 // 初始化post header
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.defaults.headers.post['Content-Type'] = 'multipart/form-data'
 
 // 支持跨域携带cookie
 axios.defaults.withCredentials = true
@@ -27,7 +28,12 @@ axios.defaults.withCredentials = true
  **/
 axios.defaults.transformRequest = function _transformRequest (params = {}) {
   // 返回完整数据，请求ajax
-  return Qs.stringify(params)
+  let formData = new FormData()
+  for (let key in params) {
+    formData.append(key, params[key])
+  }
+  return formData
+  // return Qs.stringify(params)
 }
 
 /**

@@ -4,18 +4,37 @@
     <el-upload
       class="upload-demo"
       ref="upload"
-      :data="{category_id: this.id}"
       :action="`${this.baseUrl}/upload/image`"
       :on-remove="handleRemove"
-      :on-success="uploadSuccess"
+      :http-request="customMutiUpload"
       :file-list="images"
       list-type="picture"
       :auto-upload="false"
       :multiple="true">
       <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+      <el-button @click="handleDialogLocal" size="small" type="primary">选取图片库文件</el-button>
       <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
       <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2M</div>
     </el-upload>
+
+    <el-dialog size="large" title="选取图片库文件" :visible.sync="dialogVisible">
+      <div class="imgs">
+          <el-card @click="list.checked = true" class="item" v-for="(item, index) in list" :key="index" :body-style="{ padding: '0px' }">
+            <img :src="item.path" class="image">
+            <!--<div style="padding: 0;">-->
+              <!--<span>{{ item.name }}</span>-->
+            <!--</div>-->
+          </el-card>
+      </div>
+
+      <!--工具条-->
+      <el-col :span="24" class="toolbar">
+        <el-pagination layout="prev, pager, next"
+                       @current-change="handleCurrentChange"
+                       :page-size="pagesize"
+                       :total="total" style="float:right;"></el-pagination>
+      </el-col>
+    </el-dialog>
   </div>
 
 </template>
@@ -53,7 +72,24 @@
     data () {
       return {
         baseUrl: baseUrl,
-        images: []
+        images: [],
+        dialogVisible: false,
+        // 搜索条件
+        filters: {
+          value: '',
+          key: 'name',
+          options: [
+            {value: 'name', label: '图片名称'}
+          ]
+        },
+        list: [],
+        rowId: '',
+        routeId: 1,
+        total: 0,
+        page: 1,
+        pagesize: 20,
+        listLoading: false,
+        sels: [] // 列表选中列
       }
     },
     watch: {
@@ -96,43 +132,32 @@
           return _images + ''
         }
       },
-      uploadSuccess (response, file, fileList) {
-        if (response === null) return
-        let _this = this
-        // 移除预览列表的同时，删除相关联的文件列表数组
-        response.param.forEach((item, index) => {
-          _this.images = item.path
-        })
-      },
       // 新增页面 批量上传图片
-//      customMutiUpload (file) {
-//        this._uploadMutiImage(file)
-//      },
+      customMutiUpload (file) {
+        this._uploadMutiImage(file)
+      },
       /**
        * 统一上传接口
        * @param file 接收文件对象
        * @private
        */
-//      _uploadMutiImage (file) {
-//        // 将文件转为 base64 上传至服务器
-//        let reader = new FileReader()
-//        reader.readAsDataURL(file.file)
-//        let _this = this
-//        reader.onload = async () => {
-//          // 拿到 base64 代码
-//          let params = {
-//            pic: reader.result
-//          }
-//          const res = await this.$http.post('uploadImage', params)
-//          if (res === null) return
-//          _this.images.push({
-//            name: file.file.name,
-//            status: 'success',
-//            uid: new Date().getTime(),
-//            url: res.param.path
-//          })
-//        }
-//      },
+      async _uploadMutiImage (file) {
+        // 将文件转为 base64 上传至服务器
+        console.log(file.file)
+        let params = {
+          category_id: this.id,
+          pic: file.file
+        }
+        const res = await this.$http.post('uploadImage', params)
+        if (res === null) return
+        console.log(res)
+        this.images.push({
+          name: file.file.name,
+          status: 'success',
+          uid: new Date().getTime(),
+          url: res.param[0].path
+        })
+      },
       // 图片上传前限制条件
       beforeImageUpload (file) {
         const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -148,6 +173,7 @@
       },
       // 相册上传删除
       handleRemove (file, fileList) {
+        console.log(file, fileList)
         let _this = this
         // 移除预览列表的同时，删除相关联的文件列表数组
         this.images.forEach((item, index) => {
@@ -155,12 +181,39 @@
             _this.images.splice(index, 1)
           }
         })
+      },
+      handleDialogLocal () {
+        this.getListData()
+        this.dialogVisible = true
+      },
+      handleCurrentChange (val) {
+        this.page = val
+        this.getListData()
+      },
+      // 获列表
+      async getListData () {
+        this.listLoading = true
+        let params = {
+//          id: this.$route.params.id,
+          page: this.page,
+          key: this.filters.key, // 可选参数查询
+          value: this.filters.value // 可选参数查询
+        }
+        const res = await this.$http.post(`upload/allimg`, params)
+        this.listLoading = false
+        if (res === null) return
+        this.total = res.param.pages.total
+        this.pagesize = res.param.pages.pagesize
+        this.list = res.param.list
+        this.list.forEach(item => {
+          item.push({checked: false})
+        })
       }
     }
   }
 </script>
 
-<style>
+<style lang="scss">
   .avatar-uploader .el-upload {
     position: relative;
     margin-top: 10px;
@@ -186,5 +239,55 @@
   .avatar {
     display: block;
     max-width: 200px;
+  }
+
+  .imgs {
+      width: 100%;
+      column-count: 5;
+      column-gap: 0;
+    /*align-content: baseline;*/
+
+    .item {
+      box-sizing: border-box;
+      break-inside: avoid;
+      padding: 10px;
+      margin: 10px;
+      height: auto;
+
+      /*&:hover {*/
+        /*border-color: #f00;*/
+      /*}*/
+    }
+    .image {
+       width: 100%;
+       display: block;
+    }
+  }
+
+  .time {
+    font-size: 13px;
+    color: #999;
+  }
+
+  .bottom {
+    margin-top: 13px;
+    line-height: 12px;
+  }
+
+  .button {
+    padding: 0;
+    float: right;
+  }
+
+
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+
+  .clearfix:after {
+    clear: both
   }
 </style>

@@ -5,7 +5,7 @@
       class="avatar-uploader"
       :action="`${this.baseUrl}/upload/image`"
       :show-file-list="false"
-      :on-success="uploadSuccess"
+      on-success="uploadSuccess"
       :before-upload="beforeImageUpload">
       <img v-if="cover" :src="cover" class="avatar">
       <i v-if="!isPhoto" class="el-icon-plus avatar-uploader-icon"></i>
@@ -78,11 +78,10 @@
       uploadSuccess (response, file, fileList) {
 //        const res = this.$http.post('uploadImage')
         if (response === null) return
-        this.cover = response.param[0].path
+        this.cover = response.param.path
       }
 //      // 处理编辑页面上传
 //      customUpload (file) {
-//        this._uploadImage(file)
 //      },
       /**
        * 统一上传接口

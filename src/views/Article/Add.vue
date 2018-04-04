@@ -180,13 +180,13 @@
           </el-col>
         </template>
       </el-form-item>
-      <el-form-item label="章节" prop="con_title" v-show="formData.template === 3">
+      <el-form-item label="章节" prop="content" v-show="formData.template === 3">
         <template>
           <div class="option-item" v-for="(item, index) in content">
             <el-row>
               <el-col style="margin-top: -5px;">第{{ index + 1 }}章</el-col>
               <el-col :span="20">
-                <el-input v-model="item.title[index]" placeholder="请输入章节标题" auto-complete="off"></el-input>
+                <el-input v-model="item.title" placeholder="请输入章节标题" auto-complete="off"></el-input>
               </el-col>
               <el-col :span="4">
                 <div class="option-btn">
@@ -197,10 +197,10 @@
                 </div>
               </el-col>
             </el-row>
-            <div class="option-item" v-for="(con, conIndex) in item.options">
+            <div class="option-item" v-for="(con, conIndex) in item.content_arr">
               <el-row>
                 <el-col :span="20">
-                  <el-input class="option-textarea" type="textarea" v-model="con[index]" :key="index" placeholder="请输入章节内容"
+                  <el-input class="option-textarea" type="textarea" v-model="con.content" :key="index" placeholder="请输入章节内容"
                             style="display:inline-block" auto-complete="off"></el-input>
                 </el-col>
                 <el-col :span="4">
@@ -408,7 +408,7 @@
         },
         icon_color: '',
         img: '',
-        content: [{title: '', options: ['']}],
+        content: [{title: '', content_arr: [{content: ''}]}],
         UEcontent: '',
         list: [],
         fileslist: [],
@@ -526,7 +526,7 @@
       // 新增选项
       addOption () {
 //        this.formData.con_title.push('')
-        this.content.push({title: '', options: ['']})
+        this.content.push({title: '', content_arr: [{content: ''}]})
       },
       // 删除选项
       delOption (index) {
@@ -542,11 +542,11 @@
       },
       addContent (index) {
 //        this.formData.con_title.push('')
-        this.content[index].options.push('')
+        this.content[index].content_arr.push({content: ''})
       },
       delContent (index, conIndex) {
-        if (this.content[index].options.length > 1) {
-          this.content[index].options.splice(conIndex, 1)
+        if (this.content[index].content_arr.length > 1) {
+          this.content[index].content_arr.splice(conIndex, 1)
 //          this.content[index].splice(conIndex, 1)
         } else {
           this.$message({
@@ -569,7 +569,7 @@
 //        console.log(this.icon_color)
         // this.list = res.param.list
         // 搜索选项
-        // this.filters.options.type = this.formateOptions(res.param.type)
+        // this.filters.content_arr.type = this.formateOptions(res.param.type)
         // this.filters.options.type.unshift({label: '全部分类', value: ''})
       },
       showUEContent () {
@@ -584,7 +584,7 @@
 //                  icon: this.formData.icon
         }, this.formData)
         if (this.formData.template === 3) {
-          params.content = this.content
+          params.content = JSON.stringify(this.content)
         } else {
           params.content = this.getUEContent('ue') // 富文本内容
         }
@@ -661,8 +661,9 @@
 //              }
 //              params.news_time = newsTime // 后台接收10位时间戳，需要转换
               if (this.formData.template === 3) {
-                params.content = this.content.options
-                params.con_title = this.content.title
+                params.content = JSON.stringify(this.content)
+//                params.content = this.content.content_arr
+//                params.con_title = this.content.title
               } else {
                 params.content = this.getUEContent('ue') // 富文本内容
               }
