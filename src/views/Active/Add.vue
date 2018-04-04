@@ -287,10 +287,39 @@
           if (valid) {
             this.$confirm('确认提交吗？', '提示', {}).then(async () => {
               this.formLoading = true
+              // 处理时间为时间戳
+              let pollStartTime = this.formData.poll_start_time
+              if (typeof this.formData.poll_start_time === 'number') {
+                pollStartTime = this.formData.poll_start_time / 1000
+              } else {
+                pollStartTime = new Date(this.formData.poll_start_time).getTime() / 1000
+              }
+              let pollEndTime = this.formData.poll_end_time
+              if (typeof this.formData.poll_end_time === 'number') {
+                pollEndTime = this.formData.poll_end_time / 1000
+              } else {
+                pollEndTime = new Date(this.formData.poll_end_time).getTime() / 1000
+              }
+              let startTime = this.formData.start_time
+              if (typeof this.formData.start_time === 'number') {
+                startTime = this.formData.start_time / 1000
+              } else {
+                startTime = new Date(this.formData.start_time).getTime() / 1000
+              }
+              let endTime = this.formData.end_time
+              if (typeof this.formData.end_time === 'number') {
+                endTime = this.formData.end_time / 1000
+              } else {
+                endTime = new Date(this.formData.end_time).getTime() / 1000
+              }
               let params = Object.assign(
                 {p_id: this.$route.params.pid, type: this.$route.params.type},
                 this.formData
               )
+              params.poll_start_time = pollStartTime // 后台接收10位时间戳，需要转换
+              params.poll_end_time = pollEndTime // 后台接收10位时间戳，需要转换
+              params.start_time = startTime // 后台接收10位时间戳，需要转换
+              params.end_time = endTime // 后台接收10位时间戳，需要转换
               params.intro = this.getUEContent('ue') // 富文本内容
               params.cover = this.getImageList('album') // 多图上传
               const res = await this.$http.post(`${MODEL_NAME}/add`, params)
