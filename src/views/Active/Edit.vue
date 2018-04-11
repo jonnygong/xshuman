@@ -390,8 +390,8 @@
         return this.$refs[ele].getImageList()
       },
       creatWangeditor () {
-        let that = this
-        this.editor = new WangEditor('#WangEditor')  //这个地方传入div元素的id 需要加#号
+//        let that = this
+        this.editor = new WangEditor('#WangEditor')  // 这个地方传入div元素的id 需要加#号
         // 配置 onchange 事件
         this.editor.change = function () {          // 这里是change 不是官方文档中的 onchange
           // 编辑区域内容变化时，实时打印出当前内容
@@ -399,7 +399,7 @@
         }
         this.editor.customConfig.uploadImgServer = 'http://xshuman.kfw001.com/api/admin/upload/image'  // 上传图片到服务器
         this.editor.create()     // 生成编辑器
-        this.editor.txt.html('<p>输入内容...</p>')   //注意：这个地方是txt  不是官方文档中的$txt
+        this.editor.txt.html('<p>输入内容...</p>')   // 注意：这个地方是txt  不是官方文档中的$txt
       },
       selsChange (sels) {
         this.sels = sels

@@ -28,6 +28,12 @@
           </el-button>
         </el-form-item>
         <el-form-item>
+          <a :href="`${this.baseUrl}Survey/export?id=${this.$route.params.id}`">
+            <el-button type="primary">统计结果导出
+            </el-button>
+          </a>
+        </el-form-item>
+        <el-form-item>
           <el-button @click="handleBack">返回
           </el-button>
         </el-form-item>
@@ -78,12 +84,15 @@
 
 <script>
   import util from '@/utils/js'
+  import configs from '@/configs/api'
+  const { baseUrl } = configs
 
   const MODEL_NAME = 'Survey' // API模块名
 
   export default {
     data () {
       return {
+        baseUrl: baseUrl,
         // 列表表头数据
         tableColumn: [
           {

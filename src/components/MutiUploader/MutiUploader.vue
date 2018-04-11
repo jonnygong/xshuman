@@ -19,16 +19,22 @@
 
     <el-dialog size="large" title="选取图片库文件" :visible.sync="dialogVisible">
       <div class="imgs">
-          <el-card @click="list.checked = true" class="item" v-for="(item, index) in list" :key="index" :body-style="{ padding: '0px' }">
-            <img :src="item.path" class="image">
-            <!--<div style="padding: 0;">-->
-              <!--<span>{{ item.name }}</span>-->
-            <!--</div>-->
-          </el-card>
+        <el-card :class="{checked : item.checked}" class="item" v-for="(item, index) in list" :key="index"
+                 :body-style="{ padding: '0px' }">
+          <img :src="item.path" class="image" @click="getImage(item)">
+          <!--<div style="padding: 0;">-->
+          <!--<span>{{ item.name }}</span>-->
+          <!--</div>-->
+        </el-card>
       </div>
 
       <!--工具条-->
       <el-col :span="24" class="toolbar">
+
+        <div class="dialog-footer" style="float:right; margin-left: 10px;">
+          <el-button @click.native="handleCancel">取消</el-button>
+          <el-button type="primary" @click.native="formSubmit">提交</el-button>
+        </div>
         <el-pagination layout="prev, pager, next"
                        @current-change="handleCurrentChange"
                        :page-size="pagesize"
@@ -41,7 +47,8 @@
 
 <script>
   import configs from '@/configs/api'
-  const { baseUrl } = configs
+
+  const {baseUrl} = configs
   /**
    * 二次封装 Element UI 多图 Uploader 组件
    *
@@ -119,6 +126,25 @@
     methods: {
       submitUpload () {
         this.$refs.upload.submit()
+      },
+      handleCancel () {
+        this.dialogVisible = false
+      },
+      getImage (item) {
+        item.checked = !item.checked
+      },
+      formSubmit () {
+        this.list.forEach(item => {
+          if (item.checked) {
+            this.images.push({
+              name: item.name,
+              status: 'success',
+              uid: new Date().getTime(),
+              url: item.path
+            })
+          }
+        })
+        this.dialogVisible = false
       },
       getImageList () {
         // 处理相册字段上传格式为 <http://xx , http://xx >
@@ -206,7 +232,8 @@
         this.pagesize = res.param.pages.pagesize
         this.list = res.param.list
         this.list.forEach(item => {
-          item.push({checked: false})
+//          item = res.param.list
+          this.$set(item, 'checked', false)
         })
       }
     }
@@ -242,9 +269,9 @@
   }
 
   .imgs {
-      width: 100%;
-      column-count: 5;
-      column-gap: 0;
+    width: 100%;
+    column-count: 5;
+    column-gap: 0;
     /*align-content: baseline;*/
 
     .item {
@@ -255,12 +282,15 @@
       height: auto;
 
       /*&:hover {*/
-        /*border-color: #f00;*/
+      /*border-color: #f00;*/
       /*}*/
     }
+    .checked {
+      border-color: #f00;
+    }
     .image {
-       width: 100%;
-       display: block;
+      width: 100%;
+      display: block;
     }
   }
 
@@ -278,8 +308,6 @@
     padding: 0;
     float: right;
   }
-
-
 
   .clearfix:before,
   .clearfix:after {

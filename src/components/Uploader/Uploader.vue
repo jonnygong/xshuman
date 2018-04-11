@@ -5,18 +5,38 @@
       class="avatar-uploader"
       :action="`${this.baseUrl}/upload/image`"
       :show-file-list="false"
-      on-success="uploadSuccess"
+      :on-success="uploadSuccess"
       :before-upload="beforeImageUpload">
       <img v-if="cover" :src="cover" class="avatar">
       <i v-if="!isPhoto" class="el-icon-plus avatar-uploader-icon"></i>
     </el-upload>
+    <el-button @click="handleDialogLocal" size="small" type="primary">选取图片库文件</el-button>
+
+    <el-dialog size="large" title="选取图片库文件" :visible.sync="dialogVisible">
+      <div class="imgs">
+        <el-card class="item" v-for="(item, index) in list" :key="index"
+                 :body-style="{ padding: '0px' }">
+          <img :src="item.path" class="image" @click="formSubmit(item)">
+        </el-card>
+      </div>
+
+      <!--工具条-->
+      <el-col :span="24" class="toolbar">
+        <el-pagination layout="prev, pager, next"
+                       @current-change="handleCurrentChange"
+                       :page-size="pagesize"
+                       :total="total" style="float:right;"></el-pagination>
+      </el-col>
+    </el-dialog>
   </div>
+
 
 </template>
 
 <script>
   import configs from '@/configs/api'
-  const { baseUrl } = configs
+
+  const {baseUrl} = configs
   /**
    * 二次封装 Element UI Uploader组件
    *
@@ -44,7 +64,24 @@
     data () {
       return {
         baseUrl: baseUrl,
-        cover: this.value
+        cover: this.value,
+        dialogVisible: false,
+        // 搜索条件
+        filters: {
+          value: '',
+          key: 'name',
+          options: [
+            {value: 'name', label: '图片名称'}
+          ]
+        },
+        list: [],
+        rowId: '',
+        routeId: 1,
+        total: 0,
+        page: 1,
+        pagesize: 20,
+        listLoading: false,
+        sels: -1 // 列表选中列
       }
     },
     watch: {
@@ -62,6 +99,13 @@
       }
     },
     methods: {
+      handleCancel () {
+        this.dialogVisible = false
+      },
+      formSubmit (item) {
+        this.cover = item.path
+        this.dialogVisible = false
+      },
       // 图片上传前限制条件
       beforeImageUpload (file) {
         const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -78,10 +122,39 @@
       uploadSuccess (response, file, fileList) {
 //        const res = this.$http.post('uploadImage')
         if (response === null) return
-        this.cover = response.param.path
+        this.cover = response.param[0].path
+      },
+      handleDialogLocal () {
+        this.getListData()
+        this.dialogVisible = true
+      },
+      handleCurrentChange (val) {
+        this.page = val
+        this.getListData()
+      },
+      // 获列表
+      async getListData () {
+        this.listLoading = true
+        let params = {
+//          id: this.$route.params.id,
+          page: this.page,
+          key: this.filters.key, // 可选参数查询
+          value: this.filters.value // 可选参数查询
+        }
+        const res = await this.$http.post(`upload/allimg`, params)
+        this.listLoading = false
+        if (res === null) return
+        this.total = res.param.pages.total
+        this.pagesize = res.param.pages.pagesize
+        this.list = res.param.list
+        this.list.forEach(item => {
+//          item = res.param.list
+          this.$set(item, 'checked', false)
+        })
       }
 //      // 处理编辑页面上传
 //      customUpload (file) {
+//        this._uploadImage(file)
 //      },
       /**
        * 统一上传接口
@@ -133,4 +206,35 @@
     display: block;
     max-width: 200px;
   }
+
+  .imgs {
+    width: 100%;
+    column-count: 5;
+    column-gap: 0;
+
+  /*align-content: baseline;*/
+
+    .item {
+      box-sizing: border-box;
+      break-inside: avoid;
+      padding: 10px;
+      margin: 10px;
+      height: auto;
+
+      /*&:hover {*/
+      /*border-color: #f00;*/
+      /*}*/
+    }
+
+    .checked {
+      border-color: #f00;
+    }
+
+    .image {
+      width: 100%;
+      display: block;
+    }
+
+  }
+
 </style>

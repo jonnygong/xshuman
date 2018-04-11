@@ -28,6 +28,12 @@
           </el-button>
         </el-form-item>
         <el-form-item>
+          <a :href="`${this.baseUrl}Survey/userexp`">
+            <el-button type="primary">参与企业导出
+            </el-button>
+          </a>
+        </el-form-item>
+        <el-form-item>
           <el-button @click="handleBack">返回
           </el-button>
         </el-form-item>
@@ -75,12 +81,15 @@
 
 <script>
   import util from '@/utils/js'
+  import configs from '@/configs/api'
+  const { baseUrl } = configs
 
   const MODEL_NAME = 'Survey' // API模块名
 
   export default {
     data () {
       return {
+        baseUrl: baseUrl,
         // 列表表头数据
         tableColumn: [
           {
