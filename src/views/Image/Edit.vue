@@ -150,27 +150,12 @@
 
         formLoading: false,
         formRules: {
-//          sale_status: [
-//            {type: 'number', required: true, message: '请选择区域', trigger: 'blur'}
-//          ],
-//          cover: [{required: true, message: '请上传封面图片'}],
-//          title: [{required: true, message: '请输入项目标题', trigger: 'blur'}],
-//          start_time: [
-//            {type: 'date', required: true, message: '请输入开始时间', trigger: 'blur'}
-//          ],
-//          end_time: [
-//            {type: 'date', required: true, message: '请输入结束时间', trigger: 'blur'}
-//          ],
-//          avg_price: [
-//            {type: 'number', required: true, message: '请输入均价', trigger: 'blur'}
-//          ],
-//          latitude: [
-//            {type: 'number', required: true, message: '请选择纬度', trigger: 'blur'}
-//          ],
-//          longitude: [
-//            {type: 'number', required: true, message: '请选择经度', trigger: 'blur'}
-//          ],
-//          detail: [{validator: validateContent, trigger: 'blur'}]
+          sort: [
+            {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          name: [
+            {required: true, message: '请输入内容', trigger: 'blur'}
+          ]
         },
         // 新增界面数据
         formData: {
@@ -196,6 +181,7 @@
         const res = await this.$http.post(`${MODEL_NAME}/info`, params)
         if (res === null) return
         this.formData = Object.assign({}, res.param)
+        this.formData.sort = Number(this.formData.sort)
       },
       formateOptions (source) {
         let _data = []

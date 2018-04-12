@@ -211,25 +211,13 @@
     width: 100%;
     column-count: 5;
     column-gap: 0;
-
-  /*align-content: baseline;*/
-
     .item {
       box-sizing: border-box;
       break-inside: avoid;
       padding: 10px;
       margin: 10px;
       height: auto;
-
-      /*&:hover {*/
-      /*border-color: #f00;*/
-      /*}*/
     }
-
-    .checked {
-      border-color: #f00;
-    }
-
     .image {
       width: 100%;
       display: block;

@@ -1,6 +1,12 @@
 <template>
   <div class="form-wrapper">
     <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+      <el-form-item label="问卷标题" prop="title">
+        <el-input v-model="formData.title"
+                  placeholder="请输入内容"
+                  @change="changeShareTitle"
+                  auto-complete="off"></el-input>
+      </el-form-item>
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -277,11 +283,6 @@
          */
         formItems: [
           {
-            type: 'text',
-            prop: 'title',
-            label: '问卷标题'
-          },
-          {
             type: 'textarea',
             prop: 'intro',
             label: '问卷介绍'
@@ -303,33 +304,18 @@
         },
         formLoading: false,
         formRules: {
-//          sale_status: [
-//            {type: 'number', required: true, message: '请选择区域', trigger: 'blur'}
-//          ],
-//          cover: [
-//            {required: true, message: '请上传封面图片'}
-//          ],
-//          title: [
-//            {required: true, message: '请输入项目标题', trigger: 'blur'}
-//          ],
-//          start_time: [
-//            {type: 'date', required: true, message: '请输入开始时间', trigger: 'blur'}
-//          ],
-//          end_time: [
-//            {type: 'date', required: true, message: '请输入结束时间', trigger: 'blur'}
-//          ],
-//          avg_price: [
-//            {type: 'number', required: true, message: '请输入均价', trigger: 'blur'}
-//          ],
-//          latitude: [
-//            {type: 'number', required: true, message: '请选择纬度', trigger: 'blur'}
-//          ],
-//          longitude: [
-//            {type: 'number', required: true, message: '请选择经度', trigger: 'blur'}
-//          ],
-//          detail: [
-//            {validator: validateContent, trigger: 'blur'}
-//          ]
+          title: [
+            {required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          intro: [
+            {required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          start_time: [
+            {type: 'date', required: true, message: '请输入开始时间', trigger: 'blur'}
+          ],
+          end_time: [
+            {type: 'date', required: true, message: '请输入结束时间', trigger: 'blur'}
+          ]
         },
         // 新增界面数据
         formData: {
@@ -350,6 +336,9 @@
       locationSuccess (data) {
         this.formData.longitude = data.lng
         this.formData.latitude = data.lat
+      },
+      changeShareTitle () {
+        this.formData.share_title = this.formData.title
       },
       handleCancel () {
         this.$router.back()

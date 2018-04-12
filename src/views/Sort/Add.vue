@@ -478,7 +478,7 @@
           attachment: [],
           attachment_name: [],
           abbr: '',
-          template: '',
+          template: 1,
           icon: '',
 //          con_type: '',
           con_title: [''],
