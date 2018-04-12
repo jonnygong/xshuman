@@ -24,6 +24,23 @@
               style="width: 100%">
       <el-table-column type="selection" width="55">
       </el-table-column>
+      <el-table-column prop="title" label="招聘会标题" width="180">
+      </el-table-column>
+      <!-- 图片显示 -->
+      <el-table-column prop="cover" label="招聘会图片" width="130">
+        <template slot-scope="scope">
+          <el-popover trigger="hover" placement="top">
+            <div class="ad-img">
+              <img :src="scope.row.cover" :alt="scope.row.name" width="200" height="auto"
+                   v-if="scope.row.cover !== ''">
+              <p v-else>暂无图片</p>
+            </div>
+            <div slot="reference" class="name-wrapper">
+              <el-tag>查看图片</el-tag>
+            </div>
+          </el-popover>
+        </template>
+      </el-table-column>
       <!-- 普通列表显示 -->
       <el-table-column
         v-for="(item,index) in tableColumn"
@@ -81,12 +98,12 @@
       return {
         // 列表表头数据
         tableColumn: [
-          {
-            prop: 'title',
-            label: '招聘会标题',
-            width: 120,
-            sortable: false
-          },
+//          {
+//            prop: 'title',
+//            label: '招聘会标题',
+//            width: 120,
+//            sortable: false
+//          },
           {
             prop: 'unit',
             label: '主办单位',

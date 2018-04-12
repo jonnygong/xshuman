@@ -256,8 +256,24 @@
           if (valid) {
             this.$confirm('确认提交吗？', '提示', {}).then(async () => {
               this.formLoading = true
+              // 处理时间为时间戳
+              let startTime = this.formData.start_time
+              if (typeof this.formData.start_time === 'number') {
+                startTime = parseInt(this.formData.start_time / 1000)
+              } else {
+                startTime = parseInt(new Date(this.formData.start_time).getTime() / 1000)
+              }
+              let endTime = this.formData.end_time
+              if (typeof this.formData.end_time === 'number') {
+                endTime = parseInt(this.formData.end_time / 1000)
+              } else {
+                endTime = parseInt(new Date(this.formData.end_time).getTime() / 1000)
+              }
               let params = Object.assign({}, this.formData)
-              params.onsite_time = [this.formData.start_time, this.formData.end_time]
+//              this.formData.start_time = startTime // 后台接收10位时间戳，需要转换
+//              this.formData.end_time = endTime // 后台接收10位时间戳，需要转换
+//              params.onsite_time = [this.formData.start_time, this.formData.end_time] + ''
+              params.onsite_time = [startTime, endTime] + ''
               params.intro = this.getUEContent('ue') // 富文本内容
               const res = await this.$http.post(`${MODEL_NAME}/add`, params)
               this.formLoading = false

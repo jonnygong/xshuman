@@ -1,6 +1,18 @@
 <template>
   <div class="form-wrapper">
     <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+      <el-form-item label="姓名" prop="name">
+        <el-input v-model="formData.name"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="照片" prop="cover">
+        <div class="ad-img">
+          <img :src="formData.cover" :alt="formData.name" width="200" height="auto"
+               v-if="formData.cover !== ''">
+          <p v-else>暂无图片</p>
+        </div>
+      </el-form-item>
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -83,18 +95,18 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="省份" v-model="formData.province_id">
-        <el-input placeholder="请输入内容" auto-complete="off" :value="`${options.province_id[formData.province_id]}`">
-        </el-input>
-      </el-form-item>
-      <el-form-item label="城市" v-model="formData.city_id">
-        <el-input placeholder="请输入内容" auto-complete="off" :value="`${options.city_id[formData.city_id]}`">
-        </el-input>
-      </el-form-item>
-      <el-form-item label="区域" v-model="formData.zone_id">
-        <el-input placeholder="请输入内容" auto-complete="off" :value="`${options.zone_id[formData.zone_id]}`">
-        </el-input>
-      </el-form-item>
+      <!--<el-form-item label="省份" v-model="formData.province_id">-->
+        <!--<el-input placeholder="请输入内容" auto-complete="off" :value="`${options.province_id[formData.province_id]}`">-->
+        <!--</el-input>-->
+      <!--</el-form-item>-->
+      <!--<el-form-item label="城市" v-model="formData.city_id">-->
+        <!--<el-input placeholder="请输入内容" auto-complete="off" :value="`${options.city_id[formData.city_id]}`">-->
+        <!--</el-input>-->
+      <!--</el-form-item>-->
+      <!--<el-form-item label="区域" v-model="formData.zone_id">-->
+        <!--<el-input placeholder="请输入内容" auto-complete="off" :value="`${options.zone_id[formData.zone_id]}`">-->
+        <!--</el-input>-->
+      <!--</el-form-item>-->
     </el-form>
     <!--<div slot="footer" class="dialog-footer">-->
     <!--<el-button @click.native="handleCancel">取消</el-button>-->
@@ -119,16 +131,16 @@
          * placeholder 对应提示信息
          */
         formItems: [
-          {
-            type: 'text',
-            prop: 'name',
-            label: '姓名'
-          },
-          {
-            type: 'upload',
-            prop: 'cover',
-            label: '照片'
-          },
+//          {
+//            type: 'text',
+//            prop: 'name',
+//            label: '姓名'
+//          },
+//          {
+//            type: 'upload',
+//            prop: 'cover',
+//            label: '照片'
+//          },
           {
             type: 'number',
             prop: 'tel',
@@ -139,8 +151,8 @@
             prop: 'sex',
             label: '性别',
             option: 'sex', // 下拉列表数据别名
-            labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
+            labelProp: 'name', // 下拉列表数组内元素 label 别名
+            valueProp: 'id', // 下拉列表数组内元素 value 别名
             placeholder: '请输入内容'
           },
           {
@@ -158,8 +170,8 @@
             prop: 'job_year',
             label: '工作年限',
             option: 'job_year', // 下拉列表数据别名
-            labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
+            labelProp: 'name', // 下拉列表数组内元素 label 别名
+            valueProp: 'id', // 下拉列表数组内元素 value 别名
             placeholder: '请输入内容'
           },
           {
@@ -187,8 +199,8 @@
             prop: 'degree',
             label: '学历',
             option: 'degree', // 下拉列表数据别名
-            labelProp: 'label', // 下拉列表数组内元素 label 别名
-            valueProp: 'value', // 下拉列表数组内元素 value 别名
+            labelProp: 'name', // 下拉列表数组内元素 label 别名
+            valueProp: 'id', // 下拉列表数组内元素 value 别名
             placeholder: '请输入内容'
           }
         ],
@@ -214,6 +226,10 @@
             {id: 3, name: '3-5年'},
             {id: 4, name: '5-10年'},
             {id: 5, name: '10年以上'}
+          ],
+          sex: [
+            {id: 1, name: '男'},
+            {id: 2, name: '女'}
           ],
           province_id: [],
           city_id: [],
@@ -256,9 +272,9 @@
         }
         const res = await this.$http.post(`${MODEL_NAME}/info`, params)
         if (res === null) return
-        Promise.all([this.getProvinceData(), this.getCityData(res.param.province_id), this.getZoneData(res.param.city_id)]).then(() => {
-          this.formData = Object.assign({}, res.param)
-        })
+//        Promise.all([this.getProvinceData(), this.getCityData(res.param.province_id), this.getZoneData(res.param.city_id)]).then(() => {
+        this.formData = Object.assign({}, res.param)
+//        })
       },
       async getProvinceData () {
         const res = await this.$http.post(`/Sysinfo/province`, {})

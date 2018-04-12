@@ -656,18 +656,18 @@
                   this.formData.icon = item.color
                 }
               })
+              // 处理时间为时间戳
+              let newsTime = this.formData.news_time
+              if (typeof this.formData.news_time === 'number') {
+                newsTime = this.formData.news_time / 1000
+              } else {
+                newsTime = new Date(this.formData.news_time).getTime() / 1000
+              }
               let params = Object.assign(
                 {c_id: this.$route.params.c_id},
                 this.formData
               )
-              // 处理时间为时间戳
-//              let newsTime = this.formData.news_time
-//              if (typeof this.formData.news_time === 'number') {
-//                newsTime = this.formData.news_time
-//              } else {
-//                newsTime = new Date(this.formData.news_time).getTime()
-//              }
-//              params.news_time = newsTime // 后台接收10位时间戳，需要转换
+              params.news_time = newsTime // 后台接收10位时间戳，需要转换
               if (this.formData.template === 3) {
                 params.content = JSON.stringify(this.content)
               } else {

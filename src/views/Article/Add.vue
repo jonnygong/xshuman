@@ -29,17 +29,18 @@
       </el-form-item>
       <el-form-item label="模板类型" prop="template">
         <!--<el-select v-model="formData.template" placeholder="请选择内容">-->
-          <!--<el-option-->
-            <!--v-for="(item, index) in options.template"-->
-            <!--:key="index"-->
-            <!--:label="item.label"-->
-            <!--:value="item.value">-->
-          <!--</el-option>-->
+        <!--<el-option-->
+        <!--v-for="(item, index) in options.template"-->
+        <!--:key="index"-->
+        <!--:label="item.label"-->
+        <!--:value="item.value">-->
+        <!--</el-option>-->
         <!--</el-select>-->
         <el-radio-group v-model="formData.template">
           <el-radio :label="option.value"
                     :key="optionIndex"
-                    v-for="(option, optionIndex) in options.template">{{ option.label }}</el-radio>
+                    v-for="(option, optionIndex) in options.template">{{ option.label }}
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <!--<el-form-item label="内容类型" prop="con_type">-->
@@ -71,7 +72,8 @@
         <el-radio-group v-if="item.type === 'radio'" v-model="formData[item.prop]">
           <el-radio :label="option[item.valueProp]"
                     :key="optionIndex"
-                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}</el-radio>
+                    v-for="(option, optionIndex) in options[item.option]">{{ option[item.labelProp] }}
+          </el-radio>
         </el-radio-group>
         <!-- 时间段 -->
         <el-row v-else-if="item.type === 'period'">
@@ -200,7 +202,8 @@
             <div class="option-item" v-for="(con, conIndex) in item.content_arr">
               <el-row>
                 <el-col :span="20">
-                  <el-input class="option-textarea" type="textarea" v-model="con.content" :key="index" placeholder="请输入章节内容"
+                  <el-input class="option-textarea" type="textarea" v-model="con.content" :key="index"
+                            placeholder="请输入章节内容"
                             style="display:inline-block" auto-complete="off"></el-input>
                 </el-col>
                 <el-col :span="4">
@@ -230,8 +233,9 @@
           <div slot="tip" class="el-upload__tip">只能上传office相关文件及图片，且不超过2Mb</div>
         </el-upload>
         <ul class="el-upload-list el-upload-list--text">
-          <li class="el-upload-list__item is-success" v-for="(item, index) in formData.attachment_name" >
-            <a class="el-upload-list__item-name" style="text-decoration: none" :href="formData.attachment[index]"><i class="el-icon-document"></i>{{item}}</a>
+          <li class="el-upload-list__item is-success" v-for="(item, index) in formData.attachment_name">
+            <a class="el-upload-list__item-name" style="text-decoration: none" :href="formData.attachment[index]"><i
+              class="el-icon-document"></i>{{item}}</a>
             <label class="el-upload-list__item-status-label"><i class="el-icon-upload-success el-icon-circle-check"></i></label>
             <i class="el-icon-close" @click="handleDelete(index)"></i></li>
         </ul>
@@ -254,7 +258,7 @@
       <el-dialog title="富文本内容预览" :visible.sync="dialogTableVisible">
         <template>
           <div class="UEimg">
-            <img :src='img' alt='富文本内容预览' />
+            <img :src='img' alt='富文本内容预览'/>
           </div>
         </template>
       </el-dialog>
@@ -272,6 +276,7 @@
   import MutiUploader from '@/components/MutiUploader/MutiUploader'
   import BaiduMap from '@/components/BaiduMap/BaiduMap'
   import configs from '@/configs/api'
+
   const {baseUrl} = configs
   const MODEL_NAME = 'Article' // http://api.zhongjiao.kfw001.com/webadmin/控制器/方法 -> 接口控制器名称
 
@@ -648,18 +653,18 @@
                   this.formData.icon = item.color
                 }
               })
+              // 处理时间为时间戳
+              let newsTime = this.formData.news_time
+              if (typeof this.formData.news_time === 'number') {
+                newsTime = this.formData.news_time / 1000
+              } else {
+                newsTime = new Date(this.formData.news_time).getTime() / 1000
+              }
               let params = Object.assign({
                 c_id: this.$route.params.c_id
 //                  icon: this.formData.icon
               }, this.formData)
-              // 处理时间为时间戳
-//              let newsTime = this.formData.news_time
-//              if (typeof this.formData.news_time === 'number') {
-//                newsTime = this.formData.news_time
-//              } else {
-//                newsTime = new Date(this.formData.news_time).getTime()
-//              }
-//              params.news_time = newsTime // 后台接收10位时间戳，需要转换
+              params.news_time = newsTime // 后台接收10位时间戳，需要转换
               if (this.formData.template === 3) {
                 params.content = JSON.stringify(this.content)
 //                params.content = this.content.content_arr

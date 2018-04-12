@@ -179,7 +179,7 @@
   }
 </script>
 
-<style>
+<style lang='scss'>
   .avatar-uploader .el-upload {
     position: relative;
     margin-top: 10px;

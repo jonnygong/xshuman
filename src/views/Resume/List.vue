@@ -53,32 +53,32 @@
       <!-- 时间戳转日期 -->
       <!-- <el-table-column prop="update_time" label="更新时间" width="180" :formatter="formateTime">
       </el-table-column> -->
-      <el-table-column prop="status" label="状态" width="100">
+      <!--<el-table-column prop="status" label="状态" width="100">-->
+        <!--<template slot-scope="scope">-->
+          <!--<el-tag :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'gray' : 'danger'">-->
+            <!--{{ scope.row.status === 1 ? '可用' : scope.row.status === -1 ? '已删除' : '不可用' }}-->
+          <!--</el-tag>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <el-table-column label="操作" width="80" fixed="right">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status === 1 ? 'success' : scope.row.status === -1 ? 'gray' : 'danger'">
-            {{ scope.row.status === 1 ? '可用' : scope.row.status === -1 ? '已删除' : '不可用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="200" fixed="right">
-        <template slot-scope="scope">
-          <el-button size="small"
-                     @click="statusSubmit(scope.$index, scope.row)"
-                     :disabled="scope.row.status === -1">
-            {{ scope.row.status === 1 ? '停用' : scope.row.status === 0 ? '启用' : '已删除' }}
-          </el-button>
+          <!--<el-button size="small"-->
+                     <!--@click="statusSubmit(scope.$index, scope.row)"-->
+                     <!--:disabled="scope.row.status === -1">-->
+            <!--{{ scope.row.status === 1 ? '停用' : scope.row.status === 0 ? '启用' : '已删除' }}-->
+          <!--</el-button>-->
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">查看</el-button>
-          <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+          <!--<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>-->
         </template>
       </el-table-column>
     </el-table>
 
     <!--工具条-->
     <el-col :span="24" class="toolbar">
-      <el-button type="danger"
-                 @click="batchAction('remove')"
-                 :disabled="this.sels.length===0">批量删除
-      </el-button>
+      <!--<el-button type="danger"-->
+                 <!--@click="batchAction('remove')"-->
+                 <!--:disabled="this.sels.length===0">批量删除-->
+      <!--</el-button>-->
       <el-pagination layout="prev, pager, next"
                      @current-change="handleCurrentChange"
                      :page-size="pagesize"
@@ -121,7 +121,7 @@
           value: '',
           key: '',
           options: [
-            {value: 'c_name', label: '分类名称'}
+            {value: 'name', label: '姓名'}
           ]
         },
         list: [],
@@ -187,7 +187,7 @@
           type: 'warning'
         }).then(async () => {
           let params = {
-            ids: row.id,
+            id: row.id,
             p_id: this.selectRow.pid,
             status: -1
           }
@@ -217,7 +217,7 @@
       // 修改状态
       async statusSubmit (index, row) {
         let params = {
-          ids: row.id,
+          id: row.id,
           p_id: this.selectRow.pid,
           status: 1 - row.status
         }
@@ -260,7 +260,7 @@
           this.listLoading = true
           // 非批量删除，带上 status
           let params = {
-            ids: id + '',
+            id: id + '',
             p_id: this.selectRow.pid,
             status: actions[action].status
           }
