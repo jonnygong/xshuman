@@ -28,7 +28,7 @@
           </el-button>
         </el-form-item>
         <el-form-item>
-          <a :href="`${this.baseUrl}Survey/export?id=${this.$route.params.id}`">
+          <a :href="`${this.baseUrl}Survey/export?id=${this.$route.params.id}`" download="统计结果">
             <el-button type="primary">统计结果导出
             </el-button>
           </a>

@@ -95,6 +95,7 @@
     computed: {
       isPhoto () {
         let reg = /^http|(jpg|jpeg|png)+$/
+        this.cover = this.cover || ''
         return this.cover.match(reg) && this.cover.match(reg).length >= 2
       }
     },
@@ -125,8 +126,8 @@
         this.cover = response.param[0].path
       },
       handleDialogLocal () {
-        this.getListData()
         this.dialogVisible = true
+        this.getListData()
       },
       handleCurrentChange (val) {
         this.page = val

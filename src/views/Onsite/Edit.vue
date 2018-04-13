@@ -1,6 +1,12 @@
 <template>
   <div class="form-wrapper">
     <el-form :model="formData" label-width="120px" :rules="formRules" ref="formData">
+      <el-form-item label="招聘会标题" prop="title">
+        <el-input v-model="formData.title"
+                  placeholder="请输入内容"
+                  @change="changeShareTitle"
+                  auto-complete="off"></el-input>
+      </el-form-item>
       <el-form-item v-for="(item, index) in formItems"
                     :label="item.label"
                     :prop="item.prop"
@@ -87,6 +93,20 @@
       <el-form-item label="文章详情" prop="intro">
         <UE :defaultMsg="formData.intro" ref="ue"></UE>
       </el-form-item>
+      <el-form-item label="分享标题" prop="share_title">
+        <el-input v-model="formData.share_title"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="分享图片" prop="share_img">
+        <i-uploader v-model="formData.share_img"></i-uploader>
+      </el-form-item>
+      <el-form-item label="分享描述" prop="share_describe">
+        <el-input v-model="formData.share_describe"
+                  type="textarea"
+                  placeholder="请输入内容"
+                  auto-complete="off"></el-input>
+      </el-form-item>
     </el-form>
 
     <div slot="footer" class="dialog-footer">
@@ -106,14 +126,14 @@
 
   export default {
     data () {
-//      var validateContent = (rule, value, callback) => {
-//        value = this.$refs['ue'].getUEContent()
-//        if (value === '') {
-//          callback(new Error('请输入内容'))
-//        } else {
-//          callback()
-//        }
-//      }
+      var validateContent = (rule, value, callback) => {
+        value = this.$refs['ue'].getUEContent()
+        if (value === '') {
+          callback(new Error('请输入内容'))
+        } else {
+          callback()
+        }
+      }
       return {
         /**
          * type 'text'(普通文本) 'number'(数值) 'textarea'(文本域)
@@ -125,11 +145,11 @@
          * placeholder 对应提示信息
          */
         formItems: [
-          {
-            type: 'text',
-            prop: 'title',
-            label: '招聘会标题'
-          },
+          // {
+          //   type: 'text',
+          //   prop: 'title',
+          //   label: '招聘会标题'
+          // },
           {
             type: 'text',
             prop: 'unit',
@@ -175,16 +195,36 @@
         list: [],
         formLoading: false,
         formRules: {
-          // p_id: [
-          //   {
-          //     type: 'number',
-          //     required: true,
-          //     message: '请选择父级名称',
-          //     trigger: 'blur'
-          //   }
-          // ],
-          // c_name: [{ required: true, message: '请输入内容', trigger: 'blur' }],
-          // path: [{ required: true, message: '请输入内容', trigger: 'blur' }]
+          cover: [
+            {required: true, message: '请上传封面图片'}
+          ],
+          title: [
+            {required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          unit: [
+            {required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          start_time: [
+            {type: 'date', required: true, message: '请输入时间', trigger: 'blur'}
+          ],
+          end_time: [
+            {type: 'date', required: true, message: '请输入时间', trigger: 'blur'}
+          ],
+          email: [
+            {required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          contact: [
+            {required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          address: [
+            {required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          tel: [
+            {type: 'number', required: true, message: '请输入内容', trigger: 'blur'}
+          ],
+          intro: [
+            {validator: validateContent, trigger: 'blur'}
+          ]
         },
         // 新增界面数据
         formData: {
@@ -198,13 +238,19 @@
           email: '',
           tel: '',
           start_time: '',
-          end_time: ''
+          end_time: '',
+          share_title: '',
+          share_img: '',
+          share_describe: ''
         }
       }
     },
     methods: {
       handleCancel () {
         this.$router.back()
+      },
+      changeShareTitle () {
+        this.formData.share_title = this.formData.title
       },
       // 显示编辑界面
       async handleEdit (index, row) {
@@ -220,9 +266,10 @@
 //          this.formData.start_time = ''
 //          this.formData.end_time = ''
         } else {
-          this.formData.start_time = this.formData.onsite_time[0] * 1000
-          this.formData.end_time = this.formData.onsite_time[1] * 1000
+          this.formData.start_time = new Date(this.formData.onsite_time[0] * 1000)
+          this.formData.end_time = new Date(this.formData.onsite_time[1] * 1000)
         }
+        this.formData.tel = Number(this.formData.tel)
       },
       async getArrayData () {
         const res = await this.$http.post(`${MODEL_NAME}/info`, {
@@ -311,7 +358,7 @@
     },
     mounted () {
       this.handleEdit()
-      this.getArrayData()
+      // this.getArrayData()
     },
     components: {
       UE,

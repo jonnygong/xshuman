@@ -28,7 +28,7 @@
           </el-button>
         </el-form-item>
         <el-form-item>
-          <a :href="`${this.baseUrl}Survey/userexp`">
+          <a :href="`${this.baseUrl}Survey/userexp`" download="参与企业">
             <el-button type="primary">参与企业导出
             </el-button>
           </a>
